@@ -61,12 +61,12 @@ project (PROJECT_NAME)
   end
   
   if (WINDOWS_SYSTEM_NAME == SYSTEM_NAME) then
-	  libdirs {
+    libdirs {
       "../build/tb_external_libraries/libraries/msvc/x32"
-	  }
+    }
 
     --TODO: TIM: Cleanup: tb_windows define should be removed and placed in tb_configuration.h
-	  defines { "_WINDOWS", "WIN32", "tb_windows" }
+    defines { "_WINDOWS", "WIN32", "tb_windows" }
     links { "OpenGL32", "OpenAL32", "glew32" }
   end
   
@@ -75,11 +75,26 @@ project (PROJECT_NAME)
       "../build/tb_external_libraries/libraries/macosx/"
     }
 
-  	buildoptions "-stdlib=libc++"
-  	linkoptions "-stdlib=libc++"
+    buildoptions "-stdlib=libc++"
+    linkoptions "-stdlib=libc++"
     --TODO: TIM: Cleanup: tb_macosx define should be removed and placed in tb_configuration.h
-  	defines { "tb_macosx" }
-  	links { "AppKit.framework", "OpenGL.framework", "OpenAL.framework", "glew" }
+    defines { "tb_macosx" }
+    links { "AppKit.framework", "OpenGL.framework", "OpenAL.framework", "glew" }
+  end
+  
+  if (LINUX_SYSTEM_NAME == SYSTEM_NAME) then
+    libdirs {
+      "../build/tb_external_libraries/libraries/linux/",
+      "/opt/lib/"
+    }
+    includedirs {
+      "/usr/includes/GL/"
+    }
+    buildoptions "--std=c++11"
+    linkoptions "--std=c++11"
+    --TODO: TIM: Cleanup: tb_macosx define should be removed and placed in tb_configuration.h
+    defines { "tb_linux" } 
+    links { "GL", "GLEW", "openal", "X11" }
   end
   
   includedirs {
