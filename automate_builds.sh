@@ -17,7 +17,7 @@ for d in ./ */ **/*; do
             export CurrentDirectory=$(pwd)
             cd $d
             sh "$f"
-            cd $CurrentDirectory          
+            cd $CurrentDirectory
         fi
     done
 done
