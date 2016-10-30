@@ -44,10 +44,12 @@ REM a child of dog.
 FOR /r /d %%d IN (*) DO (
 	PUSHD %%d\
 	REM Running build scripts in: %%d
+	SET found_script=0
 	SET auto_return_value=0
 	FOR %%f IN (%build_scripts%) DO (
 		IF 0==!auto_return_value! (
 			IF EXIST %%f (
+				SET found_script=1
 				CALL %%f
 				IF 0==!auto_return_value! (
 					REM Continue like normal
@@ -60,7 +62,9 @@ FOR /r /d %%d IN (*) DO (
 	)
 
 	IF 0==!auto_return_value! (
-		ECHO All build scripts within "%%d" ran successfully.
+		IF 1==!found_script! (
+			ECHO All build scripts within "%%d" ran successfully.
+		)
 	)
 	POPD
 )
