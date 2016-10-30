@@ -7,7 +7,7 @@ REM This may be run by an automated process to clean and/or build each project w
 REM
 REM -------------------------------------------------------------------------------------------------------------------
 
-PUSHD ../
+PUSHD ..\
 
 premake5 --file="make_project.lua" --name="TEMPLATE_PROJECT_FILE" clean
 
