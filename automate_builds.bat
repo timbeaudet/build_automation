@@ -46,10 +46,8 @@ REM Finished with setting up the auto_build_settings / options.
 REM ---------------------------------------------------------------------------------------------------------------------#
 
 (ECHO Auto Build Robot is going to try building projects in)>%abs_summary_report_file%
-(
-	ECHO %originalCurrentDirectory%
- 	ECHO.
- )>>%abs_summary_report_file%
+(ECHO %originalCurrentDirectory%)>>%abs_summary_report_file%
+(ECHO.)>>%abs_summary_report_file%
 
 REM Above: Making the immediate report nice and tidy including introduction stuff.
 REM Below: Search the current directory for the build scripts before child directories, special case: duplicate code.
@@ -103,9 +101,7 @@ FOR /r /d %%d IN (*) DO (
 				IF 0==!abs_return_value! (
 					REM Continue on to the next build phase.
 				) ELSE (
-					(ECHO FAILED: "!pathLocalToCurrent!\%%f")>>%abs_summary_report_file%
-					(ECHO FAILED: error condition: !abs_return_value!)>>%abs_summary_report_file%
-					(ECHO FAILED: Skipping other build scripts within this directory.)>>%abs_summary_report_file%
+					(ECHO FAILED: "!pathLocalToCurrent!\%%f"   ERROR: !abs_return_value! [stopping current project])>>%abs_summary_report_file%
 				)
 			)
 		)
