@@ -12,7 +12,7 @@ REM within a for loop, oddities ensue. Enabling delayed expansion and using !var
 REM causes the expansion to happen during command, still I think there is some more
 REM oddities with regards to nested loops, and it appears %%f or %%d must be single
 REM letter variable names, I attempted to use currentScript and childDirectory.
-SETLOCAL ENABLEDELAYEDEXPANSION
+SETLOCAL enableextensions ENABLEDELAYEDEXPANSION
 
 REM This is the set/list of scripts that will be called in the order given, left to right.
 SET build_scripts=auto_update.bat auto_clean.bat auto_build.bat auto_test.bat auto_deploy.bat
@@ -52,20 +52,30 @@ REM ----------------------------------------------------------------------------
 REM Above: Making the immediate report nice and tidy including introduction stuff.
 REM Below: Search the current directory for the build scripts before child directories, special case: duplicate code.
 REM ---------------------------------------------------------------------------------------------------------------------#
-SET found_script=0
-FOR %%f IN (%build_scripts%) DO (
-	IF EXIST %%f (
-		SET found_script=1
-		SET abs_return_value=0
-		CALL %%f
-		IF 0==!abs_return_value! (
-			REM Continue like normal
+
+REM Perform a test to ensure that the automated substring exists somewhere in the path, it would be nice to check
+REM if it is the most active directory. fail on path/automated/more/path/ and succeed: path/automated/
+SET working_directory=%CD%
+ECHO Primary Working Directory is: %working_directory%
+ECHO."%working_directory%" | findstr /C:automated 1>nul
+IF NOT errorlevel 1 (
+	SET found_script=0
+	FOR %%f IN (%build_scripts%) DO (
+		IF EXIST %%f (
+			SET found_script=1
+			SET abs_return_value=0
+			CALL %%f
+			IF 0==!abs_return_value! (
+				REM Continue like normal
+			) ELSE (
+				GOTO BreakSpecialForLoop
+			)
 		) ELSE (
-			GOTO BreakSpecialForLoop
+			REM The %%f build script was not found.
 		)
-	) ELSE (
-		REM The %%f build script was not found.
 	)
+) ELSE (
+	ECHO Skipping the primary directory search.
 )
 
 IF 1==!found_script! (
@@ -87,33 +97,43 @@ FOR /r /d %%d IN (*) DO (
 	PUSHD %%d\
 
 	SET pathLocalToCurrent=%%d
-	REM	SET pathLocalToCurrent=!pathLocalToCurrent:C:\development\auto_build_test_area=!
-	REM	(ECHO Attempting to build: !pathLocalToCurrent!)>>%abs_summary_report_file%
-	REM Above two lines is an attempt to strip most of the initial working directory from the path. Failed.
+	REM Perform a test to ensure that the automated substring exists somewhere in the path, it would be nice to check
+	REM if it is the most active directory. fail on path/automated/more/path/ and succeed: path/automated/
+	ECHO."!pathLocalToCurrent!" | findstr /C:automated 1>nul
+	IF NOT errorlevel 1 (
+		ECHO Searching Directory: !pathLocalToCurrent!
+		REM	SET pathLocalToCurrent=!pathLocalToCurrent:C:\development\auto_build_test_area=!
+		REM	(ECHO Attempting to build: !pathLocalToCurrent!)>>%abs_summary_report_file%
+		REM Above two lines is an attempt to strip most of the initial working directory from the path. Failed.
 
-	SET found_script=0
-	SET abs_return_value=0
-	FOR %%f IN (%build_scripts%) DO (
-		IF 0==!abs_return_value! (
-			IF EXIST %%f (
-				SET found_script=1
-				CALL %%f
-				IF 0==!abs_return_value! (
-					REM Continue on to the next build phase.
-				) ELSE (
-					(ECHO FAILED: "!pathLocalToCurrent!\%%f"   ERROR: !abs_return_value! [stopping current project])>>%abs_summary_report_file%
+		SET found_script=0
+		SET abs_return_value=0
+		FOR %%f IN (%build_scripts%) DO (
+			IF 0==!abs_return_value! (
+				IF EXIST %%f (
+					SET found_script=1
+					CALL %%f
+					IF 0==!abs_return_value! (
+						REM Continue on to the next build phase.
+					) ELSE (
+						(ECHO FAILED: "!pathLocalToCurrent!\%%f"   ERROR: !abs_return_value! [stopping current project])>>!abs_summary_report_file!
+					)
 				)
 			)
 		)
-	)
 
-	IF 0==!abs_return_value! (
-		IF 1==!found_script! (
-			(ECHO PASSED: "!pathLocalToCurrent!" ran successfully.)>>!abs_summary_report_file!
+		IF 0==!abs_return_value! (
+			IF 1==!found_script! (
+				(ECHO PASSED: "!pathLocalToCurrent!" ran successfully.)>>!abs_summary_report_file!
+			)
 		)
+	) ELSE (
+		REM Skipping file in a path without automated.
 	)
 	POPD
 )
+
+GOTO :EOF
 
 REM Finally now that all the projects have been built, or their failures logged, it is time to email the report.
 REM ---------------------------------------------------------------------------------------------------------------------#
@@ -135,7 +155,7 @@ IF 1==%auto_build_setting_email_report% (
 
 	IF DEFINED auto_build_setting_mailsend_credentials (
 		SET auto_build_setting_mailsend_connection=-ssl -port 465 -auth -smtp smtp.gmail.com
-		SET mailsend_message=-name "Auto Build Robot" -subject "Automated Build Report" -mime-type "text/plain" -msg-body !abs_email_report!
+		SET mailsend_message=-v -name "Auto Build Robot" -subject "Automated Build Report" -mime-type "text/plain" -msg-body !abs_email_report!
 		mailsend !auto_build_setting_mailsend_credentials! !auto_build_setting_mailsend_connection! !mailsend_message! -q
 	) ELSE (
 		ECHO Warning: Unable to use mailsend to send an email, credentials were not setup properly.
