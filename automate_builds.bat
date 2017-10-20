@@ -133,8 +133,6 @@ FOR /r /d %%d IN (*) DO (
 	POPD
 )
 
-GOTO :EOF
-
 REM Finally now that all the projects have been built, or their failures logged, it is time to email the report.
 REM ---------------------------------------------------------------------------------------------------------------------#
 IF 1==%auto_build_setting_email_report% (
