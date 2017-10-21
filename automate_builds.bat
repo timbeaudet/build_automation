@@ -46,7 +46,7 @@ REM Finished with setting up the auto_build_settings / options.
 REM ---------------------------------------------------------------------------------------------------------------------#
 
 (ECHO Auto Build Robot is going to try building projects in)>%abs_summary_report_file%
-(ECHO %originalCurrentDirectory%)>>%abs_summary_report_file%
+(ECHO %auto_build_setting_initial_directory%)>>%abs_summary_report_file%
 (ECHO.)>>%abs_summary_report_file%
 
 REM Above: Making the immediate report nice and tidy including introduction stuff.
