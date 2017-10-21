@@ -22,6 +22,7 @@ SET auto_build_setting_initial_directory=%CD%
 
 REM Have the build bot email the report when set to 1. If not using mailsend/emailing feature, just set to 0.
 SET auto_build_setting_email_report=1
+SET abs_project_failed_flag=0
 
 REM When this is false, 0, the auto_update script will attempt to check the output from the source control update
 REM for any modified files and if no files have been modified cancel the build prematurely, in a non failure
@@ -68,6 +69,7 @@ IF NOT errorlevel 1 (
 			IF 0==!abs_return_value! (
 				REM Continue like normal
 			) ELSE (
+				SET abs_project_failed_flag=1
 				GOTO BreakSpecialForLoop
 			)
 		) ELSE (
@@ -116,6 +118,7 @@ FOR /r /d %%d IN (*) DO (
 					IF 0==!abs_return_value! (
 						REM Continue on to the next build phase.
 					) ELSE (
+						SET abs_project_failed_flag=1
 						(ECHO FAILED: "!pathLocalToCurrent!\%%f"   ERROR: !abs_return_value! [stopping current project])>>!abs_summary_report_file!
 					)
 				)
@@ -136,6 +139,7 @@ FOR /r /d %%d IN (*) DO (
 REM Finally now that all the projects have been built, or their failures logged, it is time to email the report.
 REM ---------------------------------------------------------------------------------------------------------------------#
 IF 1==%auto_build_setting_email_report% (
+IF 1==%abs_project_failed_flag% (
 	(ECHO.
 	 ECHO.
 	 ECHO -----------------------------------------
@@ -158,6 +162,7 @@ IF 1==%auto_build_setting_email_report% (
 	) ELSE (
 		ECHO Warning: Unable to use mailsend to send an email, credentials were not setup properly.
 	)
+)
 )
 
 GOTO :EOF
