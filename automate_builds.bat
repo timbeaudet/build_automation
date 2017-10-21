@@ -142,7 +142,7 @@ IF 1==%auto_build_setting_email_report% (
 IF 1==%abs_project_failed_flag% (
 	(ECHO.
 	 ECHO.
-	 ECHO -----------------------------------------
+	 ECHO =========================================
 	 ECHO.
  	)>>!abs_summary_report_file!
 

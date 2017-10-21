@@ -15,6 +15,7 @@ echo "$auto_build_setting_initial_directory"
 
 # Have the build bot email the report when set to 1. If not using mailsend/emailing feature, just set to 0.
 auto_build_setting_email_report=1
+abs_project_failed_flag=0
 
 # When this is false, 0, the auto_update script will attempt to check the output from the source control update
 # for any modified files and if no files have been modified cancel the build prematurely, in a non failure
@@ -25,12 +26,12 @@ auto_build_setting_email_report=1
 # The abs_summary_report_file is the report that gets injected at the top of the email report, should provide a
 # quick overview of all the projects that PASSED all build steps, as well as those that FAILED to complete.
 abs_summary_report_file="$auto_build_setting_initial_directory/abs_output.txt"
-rm "$abs_summary_report_file"
+if [ -f "$abs_summary_report_file" ]; then rm "$abs_summary_report_file"; fi
 
 # This abs_detailed_report_file is the report that contains all the warnings and errors for each project that reached 
-# the build step, should they contain warnings or errors. Deleting it here to empty it out.
+# the build step, should they contain warnings or errors. Deleting it here, if exists, to empty it out.
 abs_detailed_report_file="$auto_build_setting_initial_directory/auto_build_report.txt"
-rm "$abs_detailed_report_file"
+if [ -f "$abs_detailed_report_file" ]; then rm "$abs_detailed_report_file"; fi
 
 # This should be set during each of the build steps, particularly for failures set this to a non-zero value which will
 # halt the continuation of the remaining steps within that project and result in a FAILED build in final report.
@@ -52,6 +53,7 @@ for d in $(find . -type d -path ./"*automated"); do
 		found_script=0
 		abs_return_value=0
 
+		echo "Jumping into directory: $d"
 		pushd "$d"		
    		for f in "${build_scripts[@]}" ; do
    			if [[ "$abs_return_value" -eq 0 ]]; then
@@ -64,6 +66,7 @@ for d in $(find . -type d -path ./"*automated"); do
 						# Continue on to the next build phase.
 						echo pass > /dev/null
 					else
+						abs_project_failed_flag=1
 						printf "FAILED: %s   ERROR: %s [stopping current project]\n" "$d/$f" "$abs_return_value" >> "$abs_summary_report_file"
 						break
 					fi
@@ -84,8 +87,9 @@ done
 # Finally now that all the projects have been built, or their failures logged, it is time to email the report.
 # ---------------------------------------------------------------------------------------------------------------------#
 # if [[ "$auto_build_setting_email_report" -eq 1 ]]; then
+# if [[ "$abs_project_failed_flag" -eq 0 ]]; then
 #
-#	printf "\n\n-----------------------------------------\n" >> "$abs_summary_report_file"
+#	printf "\n\n=========================================\n" >> "$abs_summary_report_file"
 #
 #	abs_email_report="$auto_build_setting_initial_directory/email_report.txt"
 #	COPY "$abs_summary_report_file"+"$abs_detailed_report_file" "$abs_email_report"
@@ -103,6 +107,7 @@ done
 #	) ELSE (
 #		ECHO Warning: Unable to use mailsend to send an email, credentials were not setup properly.
 #	)
+#fi
 #fi
 
 
