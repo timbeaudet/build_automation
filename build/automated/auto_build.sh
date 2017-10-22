@@ -1,23 +1,47 @@
 #!/bin/bash
 
 #
-# Automated Build Script for TEMPLATE_PROJECT_NAME to automate the building of both debug and release configurations 
+# Automated Build Script to automate the building of both debug and release configurations 
 #   of the project, including the post_build scripts that will build a release package.
 #
 # This may be run by an automated process to clean and/or build each project with an /automated/auto_ script.
-#
 #---------------------------------------------------------------------------------------------------------------------#
 
-export CurrentDirectory=$(pwd)
-cd ../
+pushd ../
 
-premake5 --file="make_project.lua" --name="TEMPLATE_PROJECT_FILE" xcode3
+kLinuxPlatform="Linux"
+currentPlatform=`uname`
+if [ $kLinuxPlatform = $currentPlatform ]; then
+	#Building a Linux project
+	premake5 --file="TEMPLATE_PROJECT_FILE.lua" clean
+	premake5 --file="TEMPLATE_PROJECT_FILE.lua" gmake
+	
+	printf "\n\nbuilding debug of: %s\n" `pwd` >> "$abs_detailed_report_file"
+	printf "========================================================\n" >> "$abs_detailed_report_file"
+	pushd linux > /dev/null
+	make config=debug 2>> "$abs_detailed_report_file"
+	if [ $? -ne 0 ]; then
+		abs_return_value=1
+	fi
 
-cd macosx/
-echo Building debug...
-xcodebuild -target "TEMPLATE_PROJECT_FILE" -configuration debug build
+	printf "\n\nbuilding release of: %s\n" `pwd` >> "$abs_detailed_report_file"
+	printf "========================================================\n" >> "$abs_detailed_report_file"
+	make config=release 2>> "$abs_detailed_report_file"
+	if [ $? -ne 0 ]; then
+		abs_return_value=1
+	fi
 
-echo Building release...
-xcodebuild -target "TEMPLATE_PROJECT_FILE" -configuration release build
+	popd > /dev/null
+else
+  #Building a Mac OS X project
+  premake5 --file="TEMPLATE_PROJECT_FILE.lua" xcode4
 
-cd $CurrentDirectory
+  cd macosx/
+  echo Building debug...
+  xcodebuild -target "TEMPLATE_PROJECT_FILE" -configuration debug build
+
+  echo Building release...
+  xcodebuild -target "TEMPLATE_PROJECT_FILE" -configuration release build
+fi
+
+popd

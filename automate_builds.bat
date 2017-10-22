@@ -32,7 +32,7 @@ REM SET auto_build_setting_update_pass_always=1
 
 REM The abs_summary_report_file is the report that gets injected at the top of the email report, should provide a
 REM quick overview of all the projects that PASSED all build steps, as well as those that FAILED to complete.
-SET abs_summary_report_file="R:/abs_output.txt"
+SET abs_summary_report_file="R:/abs_summary_report.txt"
 
 REM This abs_detailed_report_file is the report that contains all the warnings and errors for each project that reached 
 REM the build step, should they contain warnings or errors. Deleting it here to empty it out.
@@ -48,9 +48,15 @@ REM ----------------------------------------------------------------------------
 
 (ECHO Auto Build Robot is going to try building projects in)>%abs_summary_report_file%
 (ECHO %auto_build_setting_initial_directory%)>>%abs_summary_report_file%
+(ECHO|set /p=Started at: %date% %time%)>>%abs_summary_report_file%
 (ECHO.)>>%abs_summary_report_file%
 
-REM Above: Making the immediate report nice and tidy including introduction stuff.
+
+(ECHO Auto Build Robot Detailed Report)>%abs_detailed_report_file%
+(ECHO|set /p=%date% %time%)>>%abs_detailed_report_file%
+(ECHO.)>>%abs_detailed_report_file%
+
+REM Above: Making the immediate and detailed reports nice and tidy including introduction stuff.
 REM Below: Search the current directory for the build scripts before child directories, special case: duplicate code.
 REM ---------------------------------------------------------------------------------------------------------------------#
 
@@ -135,6 +141,16 @@ FOR /r /d %%d IN (*) DO (
 	)
 	POPD
 )
+
+REM Wrap up the summary and detailed reports nicely.
+REM ---------------------------------------------------------------------------------------------------------------------#
+(ECHO.)>>%abs_summary_report_file%
+(ECHO "Auto Build Robot has finished building projects.")>>%abs_summary_report_file%
+(ECHO|set /p=Finished at: %date% %time%)>>%abs_summary_report_file%
+
+(ECHO.)>>%abs_detailed_report_file%
+(ECHO "Auto Build Robot has finished building projects.")>>%abs_detailed_report_file%
+(ECHO|set /p=Finished at: %date% %time%)>>%abs_detailed_report_file%
 
 REM Finally now that all the projects have been built, or their failures logged, it is time to email the report.
 REM ---------------------------------------------------------------------------------------------------------------------#

@@ -25,7 +25,7 @@ abs_project_failed_flag=0
 
 # The abs_summary_report_file is the report that gets injected at the top of the email report, should provide a
 # quick overview of all the projects that PASSED all build steps, as well as those that FAILED to complete.
-abs_summary_report_file="$auto_build_setting_initial_directory/abs_output.txt"
+abs_summary_report_file="$auto_build_setting_initial_directory/abs_summary_report.txt"
 if [ -f "$abs_summary_report_file" ]; then rm "$abs_summary_report_file"; fi
 
 # This abs_detailed_report_file is the report that contains all the warnings and errors for each project that reached 
@@ -40,10 +40,16 @@ abs_return_value=0
 # Finished with setting up the auto_build_settings / options.
 # ---------------------------------------------------------------------------------------------------------------------#
 
+timeanddatenow=`date`
 printf "Auto Build Robot is going to try building projects in\n" >> "$abs_summary_report_file"
-printf "%s\n\n" "$auto_build_setting_initial_directory" >> "$abs_summary_report_file"
+printf "%s\n" "$auto_build_setting_initial_directory" >> "$abs_summary_report_file"
+printf "Started at: %s\n\n" "$timeanddatenow" >> "$abs_summary_report_file"
 
-# Above: Making the immediate report nice and tidy including introduction stuff.
+printf "Auto Build Robot Detailed Report\n" >> "$abs_detailed_report_file"
+printf "%s\n" "$auto_build_setting_initial_directory" >> "$abs_detailed_report_file"
+printf "Started at: %s\n\n" "$timeanddatenow" >> "$abs_detailed_report_file"
+
+# Above: Making the detailed and summary reports nice and tidy including introduction stuff.
 # Below: Search the current directory for the build scripts before child directories.
 # ---------------------------------------------------------------------------------------------------------------------#
 for d in $(find . -type d -path ./"*automated"); do
@@ -77,23 +83,29 @@ for d in $(find . -type d -path ./"*automated"); do
 
    		if [[ "$found_script" -eq 1 ]]; then
    			if [[ "$abs_return_value" -eq 0 ]]; then
-   				printf "PASSED: %s ran successfully.\n" "$d/$f" >> "$abs_summary_report_file"
+   				printf "PASSED: %s ran successfully.\n" "$d" >> "$abs_summary_report_file"
    			fi
    		fi
     	popd > /dev/null
     fi # -d loop
 done
 
+timeanddatenow=`date`
+printf "\nAuto Build Robot has finished building projects.\n" >> "$abs_summary_report_file"
+printf "Finished at: %s\n\n" "$timeanddatenow" >> "$abs_summary_report_file"
+printf "\nAuto Build Robot has finished building projects.\n" >> "$abs_detailed_report_file"
+printf "Finished at: %s\n\n" "$timeanddatenow" >> "$abs_detailed_report_file"
+
 # Finally now that all the projects have been built, or their failures logged, it is time to email the report.
 # ---------------------------------------------------------------------------------------------------------------------#
-# if [[ "$auto_build_setting_email_report" -eq 1 ]]; then
-# if [[ "$abs_project_failed_flag" -eq 0 ]]; then
+if [[ "$auto_build_setting_email_report" -eq 1 ]]; then
+#if [[ "$abs_project_failed_flag" -eq 0 ]]; then
 #
-#	printf "\n\n=========================================\n" >> "$abs_summary_report_file"
-#
-#	abs_email_report="$auto_build_setting_initial_directory/email_report.txt"
-#	COPY "$abs_summary_report_file"+"$abs_detailed_report_file" "$abs_email_report"
-#
+	printf "\n\n=========================================\n" >> "$abs_summary_report_file"
+
+	abs_email_report="$auto_build_setting_initial_directory/email_report.txt"
+	cat "$abs_summary_report_file" "$abs_detailed_report_file" > "$abs_email_report" 
+
 	# The following script should set a variable named auto_build_settings_mailsend_credentials which contains the
 	# following options to connect to the mail server to send an email. For security reasons, duh, this credentials
 	# script should not be commited to source control, so be sure to set ignore properties.
@@ -108,7 +120,6 @@ done
 #		ECHO Warning: Unable to use mailsend to send an email, credentials were not setup properly.
 #	)
 #fi
-#fi
-
+fi
 
 printf "DONE LOOPING PROJECTS" >> "$abs_summary_report_file"
