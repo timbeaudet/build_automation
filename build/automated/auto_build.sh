@@ -9,6 +9,11 @@
 
 pushd ../
 
+#If there is not abs_detailed_report_file variable, use stdout to display report.
+if [ -z ${abs_detailed_report_file+x} ]; then
+	abs_detailed_report_file=/dev/stdout
+fi
+
 kLinuxPlatform="Linux"
 currentPlatform=`uname`
 if [ $kLinuxPlatform = $currentPlatform ]; then

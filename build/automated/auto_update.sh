@@ -12,6 +12,11 @@
 # This should go back to project_root to update, which by default was 2 levels back from: project_root/build/automated/
 pushd ../../ > /dev/null
 
+#If there is not abs_detailed_report_file variable, use stdout to display report.
+if [ -z ${abs_detailed_report_file+x} ]; then
+	abs_detailed_report_file=/dev/stdout
+fi
+
 printf "\n\nupdating from source control of %s\n" `pwd` >> "$abs_detailed_report_file"
 printf "========================================================\n" >> "$abs_detailed_report_file"
 
