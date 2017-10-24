@@ -121,6 +121,7 @@ FOR /r /d %%d IN (*) DO (
 			IF 0==!abs_return_value! (
 				IF EXIST %%f (
 					SET found_script=1
+					ECHO Calling %%f
 					CALL %%f
 					IF 0==!abs_return_value! (
 						REM Continue on to the next build phase.
