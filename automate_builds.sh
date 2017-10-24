@@ -5,6 +5,7 @@
 #   in the specified order. Future revisions may allow the called script to return a value to continue or cancel the
 #   calling of the remaining files.
 #
+# Available on github: https://www.github.com/timbeaudet/build_automation under the Unlicense aggreement.
 # ---------------------------------------------------------------------------------------------------------------------
 
 # This is the set/list of scripts that will be called in the order given, left to right.

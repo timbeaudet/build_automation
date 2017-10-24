@@ -3,6 +3,9 @@
 #
 # Automated Build Script for TEMPLATE_PROJECT_NAME to copy the Linux or Mac OS X executable during a debug build.
 #
+# This may be run by an automated process to clean and/or build each project with an /automated/auto_ script.
+#
+# Available on github: https://www.github.com/timbeaudet/build_automation/ under the unliscense agreement.
 #---------------------------------------------------------------------------------------------------------------------#
 
 kLinuxPlatform="Linux"
@@ -22,12 +25,12 @@ if [ -z ${exePostfix} ]; then
 fi
 
 if [ $kLinuxPlatform = $currentPlatform ]; then
-	cp "../linux/${buildType}/TEMPLATE_PROJECT_FILE_linux" "${toRunDir}TEMPLATE_PROJECT_FILE_linux${exePostfix}"
+	cp "../linux/${buildType}/TEMPLATE_PROJECT_FILE" "${toRunDir}TEMPLATE_PROJECT_FILE_linux${exePostfix}"
 else
 	#Copy the debug executable into the run directory, which can then be run via commandline from the run directory.
 	if [ -d "${toRunDir}TEMPLATE_PROJECT_FILE${exePostfix}" ]; then
 		rm "${toRunDir}TEMPLATE_PROJECT_FILE${exePostfix}"
 	fi
 
-	cp "../macosx/debug/TEMPLATE_PROJECT_FILE.app/Contents/MacOS/TEMPLATE_PROJECT_FILE" "${toRunDir}TEMPLATE_PROJECT_FILE${exePostfix}"
+	cp "../macosx/debug/TEMPLATE_PROJECT_FILE.app/Contents/MacOS/TEMPLATE_PROJECT_FILE" "${toRunDir}TEMPLATE_PROJECT_FILE_macos${exePostfix}"
 fi

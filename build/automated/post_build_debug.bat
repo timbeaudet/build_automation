@@ -3,6 +3,7 @@
 REM
 REM Automated Build Script for TEMPLATE_PROJECT_NAME to copy the executable during a debug build.
 REM
+REM Available on github: https://www.github.com/timbeaudet/build_automation/ under the unliscense agreement.
 REM -------------------------------------------------------------------------------------------------------------------
 
 SET toSlnDir=""

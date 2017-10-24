@@ -5,6 +5,8 @@
 #   of the project, including the post_build scripts that will build a release package.
 #
 # This may be run by an automated process to clean and/or build each project with an /automated/auto_ script.
+#
+# Available on github: https://www.github.com/timbeaudet/build_automation/ under the unliscense agreement.
 #---------------------------------------------------------------------------------------------------------------------#
 
 pushd ../

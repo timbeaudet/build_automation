@@ -3,6 +3,9 @@
 #
 # Automated Build Script for TEMPLATE_PROJECT_NAME to package the Linux or Mac OS X application during a release build.
 #
+# This may be run by an automated process to clean and/or build each project with an /automated/auto_ script.
+#
+# Available on github: https://www.github.com/timbeaudet/build_automation/ under the unliscense agreement.
 #---------------------------------------------------------------------------------------------------------------------#
 
 kLinuxPlatform="Linux"
@@ -22,7 +25,7 @@ if [ -z ${exePostfix} ]; then
 fi
 
 if [ $kLinuxPlatform = $currentPlatform ]; then
-	cp "../linux/${buildType}/TEMPLATE_PROJECT_FILE_linux" "${toRunDir}TEMPLATE_PROJECT_FILE_linux${exePostfix}"
+	cp "../linux/${buildType}/TEMPLATE_PROJECT_FILE" "${toRunDir}TEMPLATE_PROJECT_FILE_linux${exePostfix}"
 else
 	#If the Mac OS X application package already exists, first delete it before recreating.
 	if [ -d "${toRunDir}../TEMPLATE_PROJECT_NAME.app" ]; then
@@ -43,5 +46,5 @@ else
 		rm "${toRunDir}TEMPLATE_PROJECT_FILE${exePostfix}"
 	fi
 
-	cp "../macosx/${buildType}/TEMPLATE_PROJECT_FILE.app/Contents/MacOS/TEMPLATE_PROJECT_FILE" "${toRunDir}TEMPLATE_PROJECT_FILE${exePostfix}"
+	cp "../macosx/${buildType}/TEMPLATE_PROJECT_FILE.app/Contents/MacOS/TEMPLATE_PROJECT_FILE" "${toRunDir}TEMPLATE_PROJECT_FILE_macos${exePostfix}"
 fi

@@ -6,7 +6,7 @@ REM control repository, used here is subversion (svn) though it shouldn't be har
 REM
 REM This may be run by an automated process to clean and/or build each project with an /automated/auto_ script.
 REM
-REM <!-- Copyright (c) 2016 Tim Beaudet - All Rights Reserved -->
+REM Available on github: https://www.github.com/timbeaudet/build_automation/ under the unliscense agreement.
 REM -------------------------------------------------------------------------------------------------------------------
 
 REM This should go back to project_root to update, which by default was 2 levels back from: project_root/build/automated/

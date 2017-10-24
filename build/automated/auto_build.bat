@@ -6,18 +6,19 @@ REM   of the project, including the post_build scripts that will build a release
 REM
 REM This may be run by an automated process to clean and/or build each project with an /automated/auto_ script.
 REM
-REM <!-- Copyright (c) 2016 Tim Beaudet - All Rights Reserved -->
+REM Available on github: https://www.github.com/timbeaudet/build_automation/ under the unliscense agreement.
 REM -------------------------------------------------------------------------------------------------------------------
 
 PUSHD ..\
 
 premake5 --file="TEMPLATE_PROJECT_FILE.lua" vs2015
 
-REM Used on 32bit Windows XP machine with VisualStudio 2010
-REM CALL "C:\Program Files\Microsoft Visual Studio 10.0\VC\vcvarsall.bat"
-
-REM Used on 64bit Windows 10 machine with VisualStudio 2015
-CALL "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat"
+IF NOT DEFINED DevEnvDir (
+	REM Used on 32bit Windows XP machine with VisualStudio 2010
+	REM CALL "C:\Program Files\Microsoft Visual Studio 10.0\VC\vcvarsall.bat"
+    REM Used on 64bit Windows 10 machine with VisualStudio 2015
+	CALL "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat"
+)
 
 IF NOT DEFINED abs_detailed_report_file (
 	ECHO WARNING: abs_detailed_report_file was not set.

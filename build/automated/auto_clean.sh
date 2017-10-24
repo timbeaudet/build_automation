@@ -4,6 +4,8 @@
 # Automated Build Script to automate the cleaning of the project.
 #
 # This may be run by an automated process to clean and/or build each project with an /automated/auto_ script.
+#
+# Available on github: https://www.github.com/timbeaudet/build_automation/ under the unliscense agreement.
 #---------------------------------------------------------------------------------------------------------------------#
 
 pushd ../

@@ -6,7 +6,7 @@
 #
 # This may be run by an automated process to clean and/or build each project with an /automated/auto_ script.
 #
-# Available on github: https://www.github.com/timbeaudet/build_automation under the Unlicense aggreement.
+# Available on github: https://www.github.com/timbeaudet/build_automation/ under the unliscense agreement.
 #---------------------------------------------------------------------------------------------------------------------#
 
 # This should go back to project_root to update, which by default was 2 levels back from: project_root/build/automated/
