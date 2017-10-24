@@ -1,9 +1,12 @@
 #!/bin/bash
 
 #
-# Automated Build Script for TEMPLATE_PROJECT_NAME to copy the Mac OS X executable during a debug build.
+# Automated Build Script for TEMPLATE_PROJECT_NAME to copy the Linux or Mac OS X executable during a debug build.
 #
 #---------------------------------------------------------------------------------------------------------------------#
+
+kLinuxPlatform="Linux"
+currentPlatform=`uname`
 
 export toSlnDir=""
 export toRunDir="../../run/"
@@ -18,9 +21,13 @@ if [ -z ${exePostfix} ]; then
 	echo exePostfix was undefined, defining as: $exePostfix
 fi
 
-#Copy the debug executable into the run directory, which can then be run via commandline from the run directory.
-if [ -d "${toRunDir}TEMPLATE_PROJECT_FILE${exePostfix}" ]; then
-	rm "${toRunDir}TEMPLATE_PROJECT_FILE${exePostfix}"
-fi
+if [ $kLinuxPlatform = $currentPlatform ]; then
+	cp "../linux/${buildType}/TEMPLATE_PROJECT_FILE_linux" "${toRunDir}TEMPLATE_PROJECT_FILE_linux${exePostfix}"
+else
+	#Copy the debug executable into the run directory, which can then be run via commandline from the run directory.
+	if [ -d "${toRunDir}TEMPLATE_PROJECT_FILE${exePostfix}" ]; then
+		rm "${toRunDir}TEMPLATE_PROJECT_FILE${exePostfix}"
+	fi
 
-cp "../macosx/debug/TEMPLATE_PROJECT_FILE.app/Contents/MacOS/TEMPLATE_PROJECT_FILE" "${toRunDir}TEMPLATE_PROJECT_FILE${exePostfix}"
+	cp "../macosx/debug/TEMPLATE_PROJECT_FILE.app/Contents/MacOS/TEMPLATE_PROJECT_FILE" "${toRunDir}TEMPLATE_PROJECT_FILE${exePostfix}"
+fi
