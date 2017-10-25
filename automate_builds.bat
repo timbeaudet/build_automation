@@ -51,10 +51,11 @@ REM ----------------------------------------------------------------------------
 (ECHO %auto_build_setting_initial_directory%)>>%abs_summary_report_file%
 (ECHO|set /p=Started at: %date% %time%)>>%abs_summary_report_file%
 (ECHO.)>>%abs_summary_report_file%
-
+(ECHO.)>>%abs_summary_report_file%
 
 (ECHO Auto Build Robot Detailed Report)>%abs_detailed_report_file%
-(ECHO|set /p=%date% %time%)>>%abs_detailed_report_file%
+(ECHO|set /p=Started at: %date% %time%)>>%abs_detailed_report_file%
+(ECHO.)>>%abs_detailed_report_file%
 (ECHO.)>>%abs_detailed_report_file%
 
 REM Above: Making the immediate and detailed reports nice and tidy including introduction stuff.
@@ -157,7 +158,7 @@ REM ----------------------------------------------------------------------------
 REM Finally now that all the projects have been built, or their failures logged, it is time to email the report.
 REM ---------------------------------------------------------------------------------------------------------------------#
 IF 1==%auto_build_setting_email_report% (
-IF 1==%abs_project_failed_flag% (
+REM IF 1==%abs_project_failed_flag% (
 	(ECHO.
 	 ECHO.
 	 ECHO =========================================
@@ -180,7 +181,7 @@ IF 1==%abs_project_failed_flag% (
 	) ELSE (
 		ECHO Warning: Unable to use mailsend to send an email, credentials were not setup properly.
 	)
-)
+REM )
 )
 
 GOTO :EOF
