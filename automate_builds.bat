@@ -158,7 +158,12 @@ REM ----------------------------------------------------------------------------
 REM Finally now that all the projects have been built, or their failures logged, it is time to email the report.
 REM ---------------------------------------------------------------------------------------------------------------------#
 IF 1==%auto_build_setting_email_report% (
-REM IF 1==%abs_project_failed_flag% (
+
+	SET email_subject_line="Automated Build Report"
+	IF 1==%abs_project_failed_flag% (
+		SET email_subject_line="Automated Build Report: PROJECTS IN FAILURE STATE"	
+	)
+
 	(ECHO.
 	 ECHO.
 	 ECHO =========================================
@@ -176,12 +181,12 @@ REM IF 1==%abs_project_failed_flag% (
 
 	IF DEFINED auto_build_setting_mailsend_credentials (
 		SET auto_build_setting_mailsend_connection=-ssl -port 465 -auth -smtp smtp.gmail.com
-		SET mailsend_message=-v -name "Auto Build Robot" -subject "Automated Build Report" -mime-type "text/plain" -msg-body !abs_email_report!
+		SET mailsend_message=-v -name "Auto Build Robot" -subject !email_subject_line! -mime-type "text/plain" -msg-body !abs_email_report!
 		mailsend !auto_build_setting_mailsend_credentials! !auto_build_setting_mailsend_connection! !mailsend_message! -q
 	) ELSE (
 		ECHO Warning: Unable to use mailsend to send an email, credentials were not setup properly.
 	)
-REM )
+
 )
 
 GOTO :EOF
