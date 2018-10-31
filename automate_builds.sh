@@ -104,8 +104,16 @@ if [[ "$auto_build_setting_email_report" -eq 1 ]]; then
 #
 	printf "\n\n=========================================\n" >> "$abs_summary_report_file"
 
+	fail_state=": linux/macos success"
+	if [[ "$abs_project_failed_flag" -eq 1 ]]; then
+		fail_state=": LINUX/MACOS PROJECTS IN FAILURE STATE"
+	fi
+	echo "From: Auto Build Robot" > /tmp/abs_email_details.txt
+	echo -e "Subject: Automated Build Report$fail_state\n\n" >> /tmp/abs_email_details.txt
+
 	abs_email_report="$auto_build_setting_initial_directory/email_report.txt"
-	cat "$abs_summary_report_file" "$abs_detailed_report_file" > "$abs_email_report" 
+	cat "/tmp/abs_email_details.txt" "$abs_summary_report_file" "$abs_detailed_report_file" > "$abs_email_report"
+	sendmail timbeaudet@yahoo.com < "$abs_email_report"
 
 	# The following script should set a variable named auto_build_settings_mailsend_credentials which contains the
 	# following options to connect to the mail server to send an email. For security reasons, duh, this credentials
