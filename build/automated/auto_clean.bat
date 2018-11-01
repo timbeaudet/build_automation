@@ -9,7 +9,5 @@ REM Available on github: https://www.github.com/timbeaudet/build_automation/ und
 REM -------------------------------------------------------------------------------------------------------------------
 
 PUSHD ..\
-
-premake5 --file="make_project.lua" --name="TEMPLATE_PROJECT_FILE" clean
-
+premake5 --file="TEMPLATE_PROJECT_FILE.lua" clean
 POPD
