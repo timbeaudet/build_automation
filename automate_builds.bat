@@ -25,6 +25,10 @@ REM Have the build bot email the report when set to 1. If not using mailsend/ema
 SET auto_build_setting_email_report=1
 SET abs_project_failed_flag=0
 
+REM Set to to 0 to build each project even if there were no changes pulled during the abs_update step.
+REM Using 1 will skip cleaning, building and other steps for projects where update indiccated no changes.
+SET abs_skip_if_no_updates=0
+
 REM When this is false, 0, the auto_update script will attempt to check the output from the source control update
 REM for any modified files and if no files have been modified cancel the build prematurely, in a non failure
 REM situation. Basically consider it an "immediately build upon change" mode that cancels out. Set 1 for nightlies.
@@ -127,8 +131,17 @@ FOR /r /d %%d IN (*) DO (
 					IF 0==!abs_return_value! (
 						REM Continue on to the next build phase.
 					) ELSE (
-						SET abs_project_failed_flag=1
-						(ECHO FAILED: "!pathLocalToCurrent!\%%f"   ERROR: !abs_return_value! [stopping current project])>>!abs_summary_report_file!
+						IF "%%f" == "auto_update.bat" (
+							IF 1==!abs_skip_if_no_updates! (
+								REM This will skip all remaining scripts because abs_return_value is non-zero.
+							) ELSE (
+								REM This will effectively continue looping over the scripts in current project.
+								SET abs_return_value=0
+							)
+						) ELSE (
+							SET abs_project_failed_flag=1
+							(ECHO FAILED: "!pathLocalToCurrent!\%%f"   ERROR: !abs_return_value! [stopping current project])>>!abs_summary_report_file!
+						)
 					)
 				)
 			)
