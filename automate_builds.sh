@@ -62,12 +62,12 @@ for d in $(find . -type d -path ./"*automated"); do
 
 		echo "Jumping into directory: $d"
 		pushd "$d"		
-   		for f in "${build_scripts[@]}" ; do
-   			if [[ "$abs_return_value" -eq 0 ]]; then
-    	    	if [ -f "$f" ]; then
-   	    			found_script=1
-   	    			#The source in "source script.sh" is important to pass abs variables to and from the called script.
-       	    		source "$f"
+		for f in "${build_scripts[@]}" ; do
+			if [[ "$abs_return_value" -eq 0 ]]; then
+				if [ -f "$f" ]; then
+					found_script=1
+					#The source in "source script.sh" is important to pass abs variables to and from the called script.
+					source "$f"
 
 					if [[ "$abs_return_value" -eq 0 ]]; then
 						# Continue on to the next build phase.
@@ -78,17 +78,17 @@ for d in $(find . -type d -path ./"*automated"); do
 						break
 					fi
 
-        		fi
-        	fi
-   		done
+				fi
+			fi
+		done
 
-   		if [[ "$found_script" -eq 1 ]]; then
-   			if [[ "$abs_return_value" -eq 0 ]]; then
-   				printf "PASSED: %s ran successfully.\n" "$d" >> "$abs_summary_report_file"
-   			fi
-   		fi
-    	popd > /dev/null
-    fi # -d loop
+		if [[ "$found_script" -eq 1 ]]; then
+			if [[ "$abs_return_value" -eq 0 ]]; then
+				printf "PASSED: %s ran successfully.\n" "$d" >> "$abs_summary_report_file"
+			fi
+		fi
+		popd > /dev/null
+	fi # -d loop
 done
 
 timeanddatenow=`date`
