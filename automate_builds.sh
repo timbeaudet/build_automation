@@ -38,6 +38,9 @@ if [ -f "$abs_detailed_report_file" ]; then rm "$abs_detailed_report_file"; fi
 # halt the continuation of the remaining steps within that project and result in a FAILED build in final report.
 abs_return_value=0
 
+# A value of 0 will build each project even if there were no changes pulled, 1 will skip projects without changes.
+abs_skip_if_no_updates=0
+
 # Finished with setting up the auto_build_settings / options.
 # ---------------------------------------------------------------------------------------------------------------------#
 
@@ -58,27 +61,30 @@ for d in $(find . -type d -path ./"*automated"); do
 	#This does skip the edge-case that the automated_builds script was run from a directory named 'automated'
 	if [[ -d "$d" ]]; then
 		found_script=0
-		abs_return_value=0
 
 		echo "Jumping into directory: $d"
 		pushd "$d"		
 		for f in "${build_scripts[@]}" ; do
-			if [[ "$abs_return_value" -eq 0 ]]; then
-				if [ -f "$f" ]; then
-					found_script=1
-					#The source in "source script.sh" is important to pass abs variables to and from the called script.
-					source "$f"
+			if [ -f "$f" ]; then
+				found_script=1
+				abs_return_value=0
+				#The source in "source script.sh" is important to pass abs variables to and from the called script.
+				source "$f"
 
-					if [[ "$abs_return_value" -eq 0 ]]; then
-						# Continue on to the next build phase.
-						echo pass > /dev/null
+				if [[ "$abs_return_value" -eq 0 ]]; then
+					: # No operation, continue on to the next build phase.
+				else
+					if [[ $f == "auto_update.sh" ]]; then
+						if [[ abs_skip_if_no_updates -eq 1 ]]; then
+							break #No changes were found, no reason to build.
+						fi
 					else
 						abs_project_failed_flag=1
 						printf "FAILED: %s   ERROR: %s [stopping current project]\n" "$d/$f" "$abs_return_value" >> "$abs_summary_report_file"
 						break
 					fi
-
 				fi
+
 			fi
 		done
 
@@ -104,16 +110,17 @@ if [[ "$auto_build_setting_email_report" -eq 1 ]]; then
 #
 	printf "\n\n=========================================\n" >> "$abs_summary_report_file"
 
-	fail_state=": linux/macos success"
+	fail_state=": linux success"
 	if [[ "$abs_project_failed_flag" -eq 1 ]]; then
-		fail_state=": LINUX/MACOS PROJECTS IN FAILURE STATE"
+		fail_state=": LINUX PROJECTS IN FAILURE STATE"
 	fi
 	echo "From: Auto Build Robot" > /tmp/abs_email_details.txt
 	echo -e "Subject: Automated Build Report$fail_state\n\n" >> /tmp/abs_email_details.txt
 
+	abs_email_address=`cat abs_email_address.secret`
 	abs_email_report="$auto_build_setting_initial_directory/email_report.txt"
 	cat "/tmp/abs_email_details.txt" "$abs_summary_report_file" "$abs_detailed_report_file" > "$abs_email_report"
-	sendmail timbeaudet@yahoo.com < "$abs_email_report"
+	sendmail "$abs_email_address" < "$abs_email_report"
 
 	# The following script should set a variable named auto_build_settings_mailsend_credentials which contains the
 	# following options to connect to the mail server to send an email. For security reasons, duh, this credentials
@@ -130,5 +137,3 @@ if [[ "$auto_build_setting_email_report" -eq 1 ]]; then
 #	)
 #fi
 fi
-
-printf "DONE LOOPING PROJECTS" >> "$abs_summary_report_file"
