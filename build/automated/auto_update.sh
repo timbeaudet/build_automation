@@ -20,6 +20,21 @@ fi
 printf "\n\nupdating from source control of %s\n" `pwd` >> "$abs_detailed_report_file"
 printf "========================================================\n" >> "$abs_detailed_report_file"
 
+# TODO: There was a project that contained returning a value when there were no svn updates.
+# would be good to put that in here and return a value indicating whether things were updated or not.
+
+# TODO: Would be nice to use git by default if user has a git repo.
+# TODO: Would be nice to call build/initialize_externals.sh if that file exists.
 svn update --quiet --non-interactive >> "$abs_detailed_report_file"
 
 popd > /dev/null
+
+# Call the user/project specific update hook script if it exists.
+abs_project_update_hook=`pwd`/abs_build_hooks/project_update.sh
+if [[ -f "$abs_project_update_hook" ]]; then
+	source "$abs_project_update_hook"
+	# TODO: Check the return value from the hook and set failure if needed.
+fi
+
+# Nothing can really go terribly wrong in updating, can it?
+abs_return_value=0

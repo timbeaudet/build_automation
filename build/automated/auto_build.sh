@@ -9,6 +9,8 @@
 # Available on github: https://www.github.com/timbeaudet/build_automation/ under the unliscense agreement.
 #---------------------------------------------------------------------------------------------------------------------#
 
+abs_build_had_failure=0
+
 #If there is not abs_detailed_report_file variable, use stdout to display report.
 if [ -z ${abs_detailed_report_file+x} ]; then
 	abs_detailed_report_file=/dev/stdout
@@ -24,16 +26,16 @@ if [ $kLinuxPlatform = $currentPlatform ]; then
 	printf "\n\nbuilding debug of: %s\n" `pwd` >> "$abs_detailed_report_file"
 	printf "========================================================\n" >> "$abs_detailed_report_file"
 	pushd linux > /dev/null
-	# make config=debug 2>> "$abs_detailed_report_file"
-	# if [ $? -ne 0 ]; then
-	# 	abs_return_value=1
-	# fi
+	make config=debug 2>> "$abs_detailed_report_file"
+	if [ $? -ne 0 ]; then
+		abs_build_had_failure=1
+	fi
 
 	printf "\n\nbuilding release of: %s\n" `pwd` >> "$abs_detailed_report_file"
 	printf "========================================================\n" >> "$abs_detailed_report_file"
 	make config=release 2>> "$abs_detailed_report_file"
 	if [ $? -ne 0 ]; then
-		abs_return_value=1
+		abs_build_had_failure=1
 	fi
 
 	popd > /dev/null
@@ -47,4 +49,20 @@ else
 
 	echo Building release...
 	xcodebuild -target "$abs_project_file_name" -configuration release build
+fi
+
+# Call the user/project specific build hook script if it exists.
+abs_project_build_hook=`pwd`/abs_build_hooks/project_build.sh
+if [[ -f "$abs_project_build_hook" ]]; then
+	source "$abs_project_build_hook"
+	# TODO: Check the return value from the hook and set abs_build_had_failure if failed.
+fi
+
+# Wrap up by setting the return value to 0 for success or an error-code on failure.
+if [ 0 -eq $abs_build_had_failure ]; then
+	# Everything actually went as expected!
+	abs_return_value=0
+else
+	# Not everything went to plan, return the failure!
+	abs_return_value=2
 fi

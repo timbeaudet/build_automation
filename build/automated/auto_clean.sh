@@ -22,3 +22,13 @@ else
 		rm -r "${toRunDir}../TEMPLATE_PROJECT_NAME.app"
 	fi
 fi
+
+# Call the user/project specific clean hook script if it exists.
+abs_project_clean_hook=`pwd`/abs_build_hooks/project_clean.sh
+if [[ -f "$abs_project_clean_hook" ]]; then
+	source "$abs_project_clean_hook"
+	# TODO: Check the return value from the hook and set failure if needed.
+fi
+
+# Nothing can really go terribly wrong in cleaning, can it?
+abs_return_value=0
