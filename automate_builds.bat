@@ -73,6 +73,9 @@ FOR /r /d %%d IN (*) DO (
 		REM Set the default values for not so important flags, and clear out any important flags with var=
 		SET abs_return_value=0
 		SET abs_project_file_name=
+		SET abs_build_version_major=0
+		SET abs_build_version_minor=0
+		SET abs_build_version_revision=0
 		SET abs_skip_if_no_updates=0
 
 		REM Load the configuration settings from the abs_build_configuration file into environment variables.
