@@ -25,10 +25,6 @@ REM Have the build bot email the report when set to 1. If not using mailsend/ema
 SET auto_build_setting_email_report=1
 SET abs_project_failed_flag=0
 
-REM Set to to 0 to build each project even if there were no changes pulled during the abs_update step.
-REM Using 1 will skip cleaning, building and other steps for projects where update indiccated no changes.
-SET abs_skip_if_no_updates=0
-
 REM When this is false, 0, the auto_update script will attempt to check the output from the source control update
 REM for any modified files and if no files have been modified cancel the build prematurely, in a non failure
 REM situation. Basically consider it an "immediately build upon change" mode that cancels out. Set 1 for nightlies.
@@ -63,45 +59,7 @@ REM ----------------------------------------------------------------------------
 (ECHO.)>>%abs_detailed_report_file%
 
 REM Above: Making the immediate and detailed reports nice and tidy including introduction stuff.
-REM Below: Search the current directory for the build scripts before child directories, special case: duplicate code.
-REM ---------------------------------------------------------------------------------------------------------------------#
-
-REM Perform a test to ensure that the automated substring exists somewhere in the path, it would be nice to check
-REM if it is the most active directory. fail on path/automated/more/path/ and succeed: path/automated/
-SET working_directory=%CD%
-ECHO Primary Working Directory is: %working_directory%
-ECHO."%working_directory%" | findstr /C:automated 1>nul
-IF NOT errorlevel 1 (
-	SET found_script=0
-	FOR %%f IN (%build_scripts%) DO (
-		IF EXIST %%f (
-			SET found_script=1
-			SET abs_return_value=0
-			CALL %%f
-			IF 0==!abs_return_value! (
-				REM Continue like normal
-			) ELSE (
-				SET abs_project_failed_flag=1
-				GOTO BreakSpecialForLoop
-			)
-		) ELSE (
-			REM The %%f build script was not found.
-		)
-	)
-) ELSE (
-	ECHO Skipping the primary directory search.
-)
-
-IF 1==!found_script! (
-	(ECHO "Scripts in root directory ran successfully.")>>%abs_summary_report_file%
-)
-GOTO SkipSpecialErrorMessage
-:BreakSpecialForLoop
-(ECHO "A script in root directory returned an error condition.")>>%abs_summary_report_file%
-:SkipSpecialErrorMessage
-
-REM The above loop may get deprecated as it is likely not to be terribly useful and become a maintenance headache.
-REM Below: Begin recursively searching each directory to call the build scripts from within.
+REM Below: Search the sub-directories of the current working directory for abs_build_configuration file.
 REM ---------------------------------------------------------------------------------------------------------------------#
 
 REM Now searching each child directory recursively, which appears to be breadth-first
@@ -109,52 +67,56 @@ REM as it went cat, dog, bird, kitten, puppy when kitten was a child of cat and 
 REM a child of dog.
 FOR /r /d %%d IN (*) DO (
 	PUSHD %%d\
-
 	SET pathLocalToCurrent=%%d
-	REM Perform a test to ensure that the automated substring exists somewhere in the path, it would be nice to check
-	REM if it is the most active directory. fail on path/automated/more/path/ and succeed: path/automated/
-	ECHO."!pathLocalToCurrent!" | findstr /C:automated 1>nul
-	IF NOT errorlevel 1 (
-		ECHO Searching Directory: !pathLocalToCurrent!
-		REM	SET pathLocalToCurrent=!pathLocalToCurrent:C:\development\auto_build_test_area=!
-		REM	(ECHO Attempting to build: !pathLocalToCurrent!)>>%abs_summary_report_file%
-		REM Above two lines is an attempt to strip most of the initial working directory from the path. Failed.
+	
+	IF EXIST abs_build_configuration (
+		REM Set the default values for not so important flags, and clear out any important flags with var=
+		SET abs_return_value=0
+		SET abs_project_file_name=
+		SET abs_skip_if_no_updates=0
+
+		REM Load the configuration settings from the abs_build_configuration file into environment variables.
+		for /f "delims== tokens=1,2" %%G in (abs_build_configuration) do (
+			set %%G=%%H
+		)
+
+		IF "!abs_project_file_name!" == "" (
+			SET abs_return_value=1
+			SET abs_project_failed_flag=1
+			(ECHO FAILED: "!pathLocalToCurrent!"   ERROR: abs_project_file_name configuration setting missing.)>>!abs_summary_report_file!
+		) else (
+			ECHO Loaded build configuration for project !abs_project_file_name!
+		)
 
 		SET found_script=0
-		SET abs_return_value=0
+
 		FOR %%f IN (%build_scripts%) DO (
 			IF 0==!abs_return_value! (
-				IF EXIST %%f (
-					SET found_script=1
-					ECHO Calling %%f
-					CALL %%f
-					IF 0==!abs_return_value! (
-						REM Continue on to the next build phase.
-					) ELSE (
-						IF "%%f" == "auto_update.bat" (
-							IF 1==!abs_skip_if_no_updates! (
-								REM This will skip all remaining scripts because abs_return_value is non-zero.
-							) ELSE (
-								REM This will effectively continue looping over the scripts in current project.
-								SET abs_return_value=0
-							)
+				ECHO Calling %%f
+				CALL %%f
+				IF 0==!abs_return_value! (
+					REM Continue on to the next build phase.
+				) ELSE (
+					IF "%%f" == "auto_update.bat" (
+						IF 1==!abs_skip_if_no_updates! (
+							REM This will skip all remaining scripts because abs_return_value is non-zero.
 						) ELSE (
-							SET abs_project_failed_flag=1
-							(ECHO FAILED: "!pathLocalToCurrent!\%%f"   ERROR: !abs_return_value! [stopping current project])>>!abs_summary_report_file!
+							REM This will effectively continue looping over the scripts in current project.
+							SET abs_return_value=0
 						)
+					) ELSE (
+						SET abs_project_failed_flag=1
+						(ECHO FAILED: "!pathLocalToCurrent!\%%f"   ERROR: !abs_return_value! [stopping current project])>>!abs_summary_report_file!
 					)
 				)
 			)
 		)
 
 		IF 0==!abs_return_value! (
-			IF 1==!found_script! (
-				(ECHO PASSED: "!pathLocalToCurrent!" ran successfully.)>>!abs_summary_report_file!
-			)
+			(ECHO PASSED: "!pathLocalToCurrent!" ran successfully.)>>!abs_summary_report_file!
 		)
-	) ELSE (
-		REM Skipping file in a path without automated.
 	)
+	
 	POPD
 )
 
@@ -199,7 +161,6 @@ IF 1==%auto_build_setting_email_report% (
 	) ELSE (
 		ECHO Warning: Unable to use mailsend to send an email, credentials were not setup properly.
 	)
-
 )
 
 GOTO :EOF

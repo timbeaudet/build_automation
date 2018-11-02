@@ -8,6 +8,10 @@ REM
 REM Available on github: https://www.github.com/timbeaudet/build_automation/ under the unliscense agreement.
 REM -------------------------------------------------------------------------------------------------------------------
 
-PUSHD ..\
-premake5 --file="TEMPLATE_PROJECT_FILE.lua" clean
-POPD
+premake5 --file="%abs_project_file_name%.lua" clean
+
+SET project_clean_hook="%CD%\abs_build_hooks\project_clean.bat"
+IF EXIST %project_clean_hook% (
+	ECHO Found and calling project specific clean hook.
+	CALL %project_clean_hook%
+)
