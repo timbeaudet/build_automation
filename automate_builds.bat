@@ -88,8 +88,6 @@ FOR /r /d %%d IN (*) DO (
 			ECHO Loaded build configuration for project !abs_project_file_name!
 		)
 
-		SET found_script=0
-
 		FOR %%f IN (%build_scripts%) DO (
 			IF 0==!abs_return_value! (
 				ECHO Calling %%f
