@@ -59,7 +59,7 @@ IF EXIST %abs_project_build_hook% (
 )
 
 REM Wrap up by setting the return value to 0 for success or an error-code on failure.
-if 0 == abs_build_had_failure (
+if 0==%abs_build_had_failure% (
 	REM Everything actually went as expected!
 	SET abs_return_value=0
 ) ELSE (
