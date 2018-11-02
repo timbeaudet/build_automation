@@ -107,7 +107,7 @@ FOR /r /d %%d IN (*) DO (
 						)
 					) ELSE (
 						SET abs_project_failed_flag=1
-						(ECHO FAILED: "!pathLocalToCurrent!\%%f"   ERROR: !abs_return_value! [stopping current project])>>!abs_summary_report_file!
+						(ECHO FAILED: "%%f"   ERROR: !abs_return_value! [stopping current project])>>!abs_summary_report_file!
 					)
 				)
 			)
