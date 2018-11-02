@@ -27,6 +27,8 @@ POPD
 
 SET project_update_hook="%CD%\abs_build_hooks\project_update.bat"
 IF EXIST %project_update_hook% (
-	ECHO Found and calling project specific update hook.
 	CALL %project_update_hook%
 )
+
+REM Nothing can really go terribly wrong in updating, can it?
+SET abs_return_value=0

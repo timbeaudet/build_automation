@@ -10,8 +10,11 @@ REM ----------------------------------------------------------------------------
 
 premake5 --file="%abs_project_file_name%.lua" clean
 
-SET project_clean_hook="%CD%\abs_build_hooks\project_clean.bat"
-IF EXIST %project_clean_hook% (
-	ECHO Found and calling project specific clean hook.
-	CALL %project_clean_hook%
+REM Call the user/project specific clean  hook script if it exists.
+SET abs_project_clean_hook="%CD%\abs_build_hooks\project_clean.bat"
+IF EXIST %abs_project_clean_hook% (
+	CALL %abs_project_clean_hook%
 )
+
+REM Nothing can really go terribly wrong in cleaning, can it?
+SET abs_return_value=0

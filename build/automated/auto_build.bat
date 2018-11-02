@@ -9,6 +9,8 @@ REM
 REM Available on github: https://www.github.com/timbeaudet/build_automation/ under the unliscense agreement.
 REM -------------------------------------------------------------------------------------------------------------------
 
+SET abs_build_had_failure=0
+
 premake5 --file="%abs_project_file_name%.lua" vs2015
 
 IF NOT DEFINED DevEnvDir (
@@ -36,7 +38,7 @@ SET extra_options=/nologo /maxcpucount /verbosity:quiet /flp1:logfile=%abs_detai
 msbuild "windows/%abs_project_file_name%.sln" /property:Configuration=debug %extra_options%
 IF NOT 0 == %errorlevel% (
 	ECHO debug build failed
-	SET abs_return_value=1
+	SET abs_build_had_failure=1
 )
 
 (ECHO.)>>%abs_detailed_report_file%
@@ -47,11 +49,20 @@ IF NOT 0 == %errorlevel% (
 msbuild "windows/%abs_project_file_name%.sln" /property:Configuration=release %extra_options%
 IF NOT 0 == %errorlevel% (
 	ECHO release build failed
-	SET abs_return_value=1
+	SET abs_build_had_failure=1
 )
 
-ECHO checking if %project_build_hook% exists.
-IF EXIST %project_build_hook% (
-	ECHO Found and calling project specific build hook.
-	CALL %project_build_hook%
+REM Call the user/project specific build hook script if it exists.
+SET abs_project_build_hook="%CD%\abs_build_hooks\project_build.bat"
+IF EXIST %abs_project_build_hook% (
+	CALL %abs_project_build_hook%
+)
+
+REM Wrap up by setting the return value to 0 for success or an error-code on failure.
+if 0 == abs_build_had_failure (
+	REM Everything actually went as expected!
+	SET abs_return_value=0
+) ELSE (
+	REM Not everything went to plan, return the failure!
+	SET abs_return_value=2
 )
