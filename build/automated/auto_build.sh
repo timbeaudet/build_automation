@@ -40,15 +40,15 @@ if [ $kLinuxPlatform = $currentPlatform ]; then
 
 	popd > /dev/null
 else
-  #Building a Mac OS X project
-  premake5 --file="TEMPLATE_PROJECT_FILE.lua" xcode4
+	#Building a Mac OS X project
+	premake5 --file="TEMPLATE_PROJECT_FILE.lua" xcode4
 
-  cd macosx/
-  echo Building debug...
-  xcodebuild -target "TEMPLATE_PROJECT_FILE" -configuration debug build
+	cd macosx/
+	echo Building debug...
+	xcodebuild -target "TEMPLATE_PROJECT_FILE" -configuration debug build
 
-  echo Building release...
-  xcodebuild -target "TEMPLATE_PROJECT_FILE" -configuration release build
+	echo Building release...
+	xcodebuild -target "TEMPLATE_PROJECT_FILE" -configuration release build
 fi
 
 popd
