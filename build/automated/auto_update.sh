@@ -9,8 +9,8 @@
 # Available on github: https://www.github.com/timbeaudet/build_automation/ under the unliscense agreement.
 #---------------------------------------------------------------------------------------------------------------------#
 
-# This should go back to project_root to update, which by default was 2 levels back from: project_root/build/automated/
-pushd ../../ > /dev/null
+# This should go back to project_root to update, which by default is 1 levels back from: project_root/build/
+pushd ../ > /dev/null
 
 #If there is not abs_detailed_report_file variable, use stdout to display report.
 if [ -z ${abs_detailed_report_file+x} ]; then

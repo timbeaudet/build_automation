@@ -8,9 +8,9 @@
 # Available on github: https://www.github.com/timbeaudet/build_automation/ under the unlicense agreement.
 #---------------------------------------------------------------------------------------------------------------------#
 
-pushd ../
+echo Running clean.sh from `pwd`
 
-premake5 --file="TEMPLATE_PROJECT_FILE.lua" clean
+premake5 --file="$abs_project_file_name.lua" clean
 
 kLinuxPlatform="Linux"
 currentPlatform=`uname`
@@ -22,5 +22,3 @@ else
 		rm -r "${toRunDir}../TEMPLATE_PROJECT_NAME.app"
 	fi
 fi
-
-popd

@@ -38,9 +38,6 @@ if [ -f "$abs_detailed_report_file" ]; then rm "$abs_detailed_report_file"; fi
 # halt the continuation of the remaining steps within that project and result in a FAILED build in final report.
 abs_return_value=0
 
-# A value of 0 will build each project even if there were no changes pulled, 1 will skip projects without changes.
-abs_skip_if_no_updates=0
-
 # Finished with setting up the auto_build_settings / options.
 # ---------------------------------------------------------------------------------------------------------------------#
 
@@ -56,45 +53,55 @@ printf "Started at: %s\n\n" "$timeanddatenow" >> "$abs_detailed_report_file"
 # Above: Making the detailed and summary reports nice and tidy including introduction stuff.
 # Below: Search the current directory for the build scripts before child directories.
 # ---------------------------------------------------------------------------------------------------------------------#
-for d in $(find . -type d -path ./"*automated"); do
-	#We already know we are in an automated directory, no need to test.
+for d in $(find . -type f -name abs_build_configuration | xargs -n1 dirname); do
 	#This does skip the edge-case that the automated_builds script was run from a directory named 'automated'
-	if [[ -d "$d" ]]; then
-		found_script=0
 
-		echo "Jumping into directory: $d"
-		pushd "$d"		
-		for f in "${build_scripts[@]}" ; do
-			if [ -f "$f" ]; then
-				found_script=1
-				abs_return_value=0
-				#The source in "source script.sh" is important to pass abs variables to and from the called script.
-				source "$f"
+	echo "Jumping into directory: $d"
+	pushd "$d"
 
-				if [[ "$abs_return_value" -eq 0 ]]; then
-					: # No operation, continue on to the next build phase.
-				else
-					if [[ $f == "auto_update.sh" ]]; then
-						if [[ abs_skip_if_no_updates -eq 1 ]]; then
-							break #No changes were found, no reason to build.
-						fi
-					else
-						abs_project_failed_flag=1
-						printf "FAILED: %s   ERROR: %s [stopping current project]\n" "$d/$f" "$abs_return_value" >> "$abs_summary_report_file"
-						break
-					fi
+
+
+	# Set the default values for not so important flags, and clear out any important flags with var=
+	abs_return_value=0
+	abs_project_file_name=
+	abs_skip_if_no_updates=0
+
+	# Load the configuration settings from the abs_build_configuration file into environment variables.
+	source ./abs_build_configuration
+
+	# IF "!abs_project_file_name!" == "" (
+	# 	SET abs_return_value=1
+	# 	SET abs_project_failed_flag=1
+	# 	(ECHO FAILED: "!pathLocalToCurrent!"   ERROR: abs_project_file_name configuration setting missing.)>>!abs_summary_report_file!
+	# ) else (
+	# 	ECHO Loaded build configuration for project !abs_project_file_name!
+	# )
+
+
+	for f in "${build_scripts[@]}" ; do
+		abs_return_value=0
+		#The source in "source script.sh" is important to pass abs variables to and from the called script.
+		source "$f"
+
+		if [[ "$abs_return_value" -eq 0 ]]; then
+			: # No operation, continue on to the next build phase.
+		else
+			if [[ $f == "auto_update.sh" ]]; then
+				if [[ abs_skip_if_no_updates -eq 1 ]]; then
+					break #No changes were found, no reason to build.
 				fi
-
-			fi
-		done
-
-		if [[ "$found_script" -eq 1 ]]; then
-			if [[ "$abs_return_value" -eq 0 ]]; then
-				printf "PASSED: %s ran successfully.\n" "$d" >> "$abs_summary_report_file"
+			else
+				abs_project_failed_flag=1
+				printf "FAILED: %s   ERROR: %s [stopping current project]\n" "$f" "$abs_return_value" >> "$abs_summary_report_file"
+				break
 			fi
 		fi
-		popd > /dev/null
-	fi # -d loop
+	done
+
+	if [[ "$abs_return_value" -eq 0 ]]; then
+		printf "PASSED: %s ran successfully.\n" "$d" >> "$abs_summary_report_file"
+	fi
+	popd > /dev/null
 done
 
 timeanddatenow=`date`
