@@ -11,7 +11,7 @@ By running ``automate_builds`` script, all projects within the current directory
 
 ### Windows
 
-1. `git clone` the repository or download it. `C:/path/abs/`
+1. `git clone` or download the repository to some path: `C:/path/abs/`
 2. Set PATH environment variable to point to location downloaded.
 	- Press `Windows Key` type `System` and open.
 	- Open `Advanced system settings`
@@ -19,6 +19,15 @@ By running ``automate_builds`` script, all projects within the current directory
 	- Carefully select `Path` and click `Edit`
 	- Add the path `C:/path/abs/batch`
 3. Close any command prompts and reopen for the new path to be used.
+
+### Linux (Ubuntu 18.04)
+
+1. `git clone` or download the repository to some path: `~/path/abs`
+2. `vim ~/.profile` and add export `PATH=~/path/abs:$PATH`
+3. `source ~/.profile` to reload those changes in your terminal.
+
+### Old version:
+> No longer fully useful, but steps like this will need to occur for each project. (changes incoming.)
 
 I place ``automate_builds.bat`` and/or ``automate_builds.sh`` in a directory, *tools* that is included in my PATH.
 

@@ -9,7 +9,7 @@
 # ---------------------------------------------------------------------------------------------------------------------
 
 # This is the set/list of scripts that will be called in the order given, left to right.
-declare -a build_scripts=("auto_update.sh" "auto_clean.sh" "auto_build.sh" "auto_test.sh" "auto_deploy.sh")
+declare -a build_scripts=("abs_update.sh" "abs_clean.sh" "abs_build.sh" "abs_test.sh" "abs_deploy.sh")
 
 auto_build_setting_initial_directory=$(pwd)
 echo "$auto_build_setting_initial_directory"
