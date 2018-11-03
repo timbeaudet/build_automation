@@ -18,8 +18,8 @@ if [ $kLinuxPlatform == $currentPlatform ]; then
 	: #No operation, if any deployable gets created, delete it during cleaning.
 else
 	#If the Mac OS X delpoyable application package exists, delete it during project cleaning.
-	if [ -d "${toRunDir}../TEMPLATE_PROJECT_NAME.app" ]; then
-		rm -r "${toRunDir}../TEMPLATE_PROJECT_NAME.app"
+	if [ -d "${toRunDir}../$abs_project_friendly_name.app" ]; then
+		rm -r "${toRunDir}../$abs_project_friendly_name.app"
 	fi
 fi
 
