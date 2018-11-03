@@ -103,7 +103,7 @@ FOR /r /d %%d IN (*) DO (
 					IF 0==!abs_return_value! (
 						REM Continue on to the next build phase.
 					) ELSE (
-						IF "%%f" == "auto_update.bat" (
+						IF "%%f" == "abs_update.bat" (
 							IF 1==!abs_skip_if_no_updates! (
 								REM This will skip all remaining scripts because abs_return_value is non-zero.
 							) ELSE (

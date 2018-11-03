@@ -91,7 +91,7 @@ for d in $(find . -type f -name abs_build_configuration | xargs -n1 dirname); do
 			if [[ "$abs_return_value" -eq 0 ]]; then
 				: # No operation, continue on to the next build phase.
 			else
-				if [[ $f == "auto_update.sh" ]]; then
+				if [[ $f == "abs_update.sh" ]]; then
 					if [[ abs_skip_if_no_updates -eq 1 ]]; then
 						break #No changes were found, no reason to build.
 					fi
