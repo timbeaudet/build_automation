@@ -20,12 +20,22 @@ fi
 printf "\n\nupdating from source control of %s\n" `pwd` >> "$abs_detailed_report_file"
 printf "========================================================\n" >> "$abs_detailed_report_file"
 
-# TODO: There was a project that contained returning a value when there were no svn updates.
-# would be good to put that in here and return a value indicating whether things were updated or not.
+found_updates=0
 
-# TODO: Would be nice to use git by default if user has a git repo.
-# TODO: Would be nice to call build/initialize_externals.sh if that file exists.
-svn update --quiet --non-interactive >> "$abs_detailed_report_file"
+if [[ -d .git ]]; then
+	git fetch origin
+	if [[ $(git log HEAD..origin/master --oneline) ]]; then
+		echo "Found modifications, updating repository."
+		git pull --rebase
+		found_updates=1
+	fi
+else
+	if [[ $(svn merge --dry-run -r BASE:HEAD .) ]]; then
+		echo "Found modifications, updating repository."
+		svn update --quiet --non-interactive >> "$abs_detailed_report_file"
+		found_updates=1
+	fi
+fi
 
 popd > /dev/null
 
@@ -36,5 +46,15 @@ if [[ -f "$abs_project_update_hook" ]]; then
 	# TODO: Check the return value from the hook and set failure if needed.
 fi
 
-# Nothing can really go terribly wrong in updating, can it?
-abs_return_value=0
+# TODO: Would be nice to call build/initialize_externals.sh if that file exists.
+# abs_initialize_externals=`pwd`/initialize_externals.sh
+# if [[ -f "$abs_project_update_hook" ]]; then
+# 	source "$abs_project_update_hook"
+# 	# TODO: Check the return value from the hook and set failure if needed.
+# fi
+
+# Not exactly true, but nothing went wrong by default. This will set the value to 1 or 0 depending
+# on whether updates were found or not. NOTE: the primary script will not throw an error in this
+# very specific situation (abs_update script value 1) and instead will either continue or skip the
+# rest of the build steps for the current project depending on settings.
+abs_return_value=$found_updates
