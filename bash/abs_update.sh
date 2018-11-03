@@ -2,9 +2,7 @@
 
 #
 # Automated Build Script to automate the update process by grabbing the latest from the source
-# control repository, used here is subversion (svn) though it shouldn't be hard to modify to Git or Hg.
-#
-# This may be run by an automated process to clean and/or build each project with an /automated/auto_ script.
+# control repository, used here is Git if .git directory exists one directory back, or subversion (svn) if not.
 #
 # Available on github: https://www.github.com/timbeaudet/build_automation/ under the unliscense agreement.
 #---------------------------------------------------------------------------------------------------------------------#
@@ -48,8 +46,8 @@ fi
 
 # TODO: Would be nice to call build/initialize_externals.sh if that file exists.
 # abs_initialize_externals=`pwd`/initialize_externals.sh
-# if [[ -f "$abs_project_update_hook" ]]; then
-# 	source "$abs_project_update_hook"
+# if [[ -f "$abs_initialize_externals" ]]; then
+# 	source "$abs_initialize_externals"
 # 	# TODO: Check the return value from the hook and set failure if needed.
 # fi
 
