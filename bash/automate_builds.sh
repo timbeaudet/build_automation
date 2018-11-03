@@ -83,7 +83,7 @@ for d in $(find . -type f -name abs_build_configuration | xargs -n1 dirname); do
 		echo Loaded build configuration for project $abs_project_file_name
 
 		for f in "${build_scripts[@]}" ; do
-			abs_return_value=0
+			abs_return_value=1
 			#The source in "source script.sh" is important to pass abs variables to and from the called script.
 			source "$f"
 
