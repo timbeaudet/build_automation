@@ -117,10 +117,10 @@ FOR /r /d %%d IN (*) DO (
 					)
 				)
 			)
-		)
 
-		IF 0==!abs_return_value! (
-			(ECHO PASSED: "!pathLocalToCurrent!" ran successfully.)>>!abs_summary_report_file!
+			IF 0==!abs_return_value! (
+				(ECHO PASSED: "!pathLocalToCurrent!" ran successfully.)>>!abs_summary_report_file!
+			)
 		)
 	)
 	
