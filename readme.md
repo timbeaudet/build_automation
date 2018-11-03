@@ -20,11 +20,42 @@ By running ``automate_builds`` script, all projects within the current directory
 	- Add the path `C:/path/abs/batch`
 3. Close any command prompts and reopen for the new path to be used.
 
+> Note: To send email the sendmail executable needs to exist in the PATH as does configuration file `automatic_builds_set_credentials.bat` don't use the one in the source control for anything more than a template or guide. This sets what email address to send to along with requiring a gmail account (username and password) to send from.
+
 ### Linux (Ubuntu 18.04)
 
 1. `git clone` or download the repository to some path: `~/path/abs`
 2. `vim ~/.profile` and add export `PATH=~/path/abs:$PATH`
 3. `source ~/.profile` to reload those changes in your terminal.
+
+> Note: To send email one must have `sendmail` and `ssmtp` installed on system, use `apt-get install`. Then setup the ssmtp configuration file, **CONTAINS PASSWORD, DO NOT STREAM** `vim /etc/ssmtp/ssmtp.conf`, starting with the following as a guide:
+
+```
+#
+# Config file for SSMTP sendmail
+#
+# The person who gets all mail for userids < 1000
+# Make this empty to disable rewriting.
+root=user@gmail.com
+
+# The place where the mail goes. The actual machine name is required no
+# MX records are consulted. Commonly mailhosts are named mail.domain.com
+mailhub=smtp.gmail.com:587
+AuthUser=user@gmail.com
+AuthPass=passwd
+UseTLS=YES
+UseSTARTTLS=YES
+# Where will the mail seem to come from?
+#rewriteDomain=
+
+# The full hostname
+hostname=name
+
+# Are users allowed to set their own From: address?
+# YES - Allow the user to specify their own From: address
+# NO - Use the system generated From: address
+#FromLineOverride=YES
+```
 
 ### Old version:
 > No longer fully useful, but steps like this will need to occur for each project. (changes incoming.)
