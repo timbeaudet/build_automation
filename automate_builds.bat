@@ -23,7 +23,7 @@ SET auto_build_setting_initial_directory=%CD%
 
 REM Have the build bot email the report when set to 1. If not using mailsend/emailing feature, just set to 0.
 SET auto_build_setting_email_report=1
-SET abs_project_failed_flag=0
+SET abs_any_project_failed_flag=0
 
 REM When this is false, 0, the auto_update script will attempt to check the output from the source control update
 REM for any modified files and if no files have been modified cancel the build prematurely, in a non failure
@@ -85,7 +85,7 @@ FOR /r /d %%d IN (*) DO (
 
 		IF "!abs_project_file_name!" == "" (
 			SET abs_return_value=1
-			SET abs_project_failed_flag=1
+			SET abs_any_project_failed_flag=1
 			ECHO FAILED: Invalid configuration file at: "!pathLocalToCurrent!"
 			(ECHO FAILED: "!pathLocalToCurrent!"   ERROR: abs_project_file_name configuration setting missing.)>>!abs_summary_report_file!
 		) else (
@@ -107,7 +107,7 @@ FOR /r /d %%d IN (*) DO (
 							SET abs_return_value=0
 						)
 					) ELSE (
-						SET abs_project_failed_flag=1
+						SET abs_any_project_failed_flag=1
 						(ECHO FAILED: "%%f"   ERROR: !abs_return_value! [stopping current project])>>!abs_summary_report_file!
 					)
 				)
@@ -137,7 +137,7 @@ REM ----------------------------------------------------------------------------
 IF 1==%auto_build_setting_email_report% (
 
 	SET email_subject_line="Automated Build Report"
-	IF 1==%abs_project_failed_flag% (
+	IF 1==%abs_any_project_failed_flag% (
 		SET email_subject_line="Automated Build Report: PROJECTS IN FAILURE STATE"	
 	)
 
