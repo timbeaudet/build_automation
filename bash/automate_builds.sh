@@ -62,16 +62,20 @@ for d in $(find . -type f -name abs_build_configuration | xargs -n1 dirname); do
 	# Set the default values for not so important flags, and clear out any important flags with var=
 	abs_return_value=0
 	abs_project_file_name=
+	abs_project_friendly_name=
 	abs_skip_if_no_updates=0
 
 	# Load the configuration settings from the abs_build_configuration file into environment variables.
 	source ./abs_build_configuration
 
-	
 	if [[ -z "$abs_project_file_name" ]]; then #test if var is empty or unset.
 		abs_any_project_failed_flag=1
 		echo FAILED: Invalid configuration file at: "$d"
 		printf "FAILED: %s   ERROR: abs_project_file_name configuration setting missing.\n" "$d" >> "$abs_summary_report_file"
+	elif [[ -z "$abs_project_friendly_name" ]]; then #test if var is empty or unset.
+		abs_any_project_failed_flag=1
+		echo FAILED: Invalid configuration file at: "$d"
+		printf "FAILED: %s   ERROR: abs_project_friendly_name configuration setting missing.\n" "$d" >> "$abs_summary_report_file"
 	else
 		echo Loaded build configuration for project $abs_project_file_name
 
