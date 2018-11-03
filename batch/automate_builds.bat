@@ -79,36 +79,39 @@ FOR /r /d %%d IN (*) DO (
 		SET abs_skip_if_no_updates=0
 
 		REM Load the configuration settings from the abs_build_configuration file into environment variables.
-		for /f "delims== tokens=1,2" %%G in (abs_build_configuration) do (
+		FOR /f "delims== tokens=1,2" %%G in (abs_build_configuration) do (
 			set %%G=%%H
 		)
 
 		IF "!abs_project_file_name!" == "" (
-			SET abs_return_value=1
 			SET abs_any_project_failed_flag=1
 			ECHO FAILED: Invalid configuration file at: "!pathLocalToCurrent!"
 			(ECHO FAILED: "!pathLocalToCurrent!"   ERROR: abs_project_file_name configuration setting missing.)>>!abs_summary_report_file!
-		) else (
-			ECHO Loaded build configuration for project !abs_project_file_name!
-		)
+		) ELSE IF "!abs_project_friendly_name!" == "" (
+			SET abs_any_project_failed_flag=1
+			ECHO FAILED: Invalid configuration file at: "!pathLocalToCurrent!"
+			(ECHO FAILED: "!pathLocalToCurrent!"   ERROR: abs_project_friendly_name configuration setting missing.)>>!abs_summary_report_file!
+		) ELSE (
+			ECHO Loaded build configuration for project !abs_project_file_name! aka "!abs_project_friendly_name!"
 
-		FOR %%f IN (%build_scripts%) DO (
-			IF 0==!abs_return_value! (
-				ECHO Calling %%f
-				CALL %%f
+			FOR %%f IN (%build_scripts%) DO (
 				IF 0==!abs_return_value! (
-					REM Continue on to the next build phase.
-				) ELSE (
-					IF "%%f" == "auto_update.bat" (
-						IF 1==!abs_skip_if_no_updates! (
-							REM This will skip all remaining scripts because abs_return_value is non-zero.
-						) ELSE (
-							REM This will effectively continue looping over the scripts in current project.
-							SET abs_return_value=0
-						)
+					ECHO Calling %%f
+					CALL %%f
+					IF 0==!abs_return_value! (
+						REM Continue on to the next build phase.
 					) ELSE (
-						SET abs_any_project_failed_flag=1
-						(ECHO FAILED: "%%f"   ERROR: !abs_return_value! [stopping current project])>>!abs_summary_report_file!
+						IF "%%f" == "auto_update.bat" (
+							IF 1==!abs_skip_if_no_updates! (
+								REM This will skip all remaining scripts because abs_return_value is non-zero.
+							) ELSE (
+								REM This will effectively continue looping over the scripts in current project.
+								SET abs_return_value=0
+							)
+						) ELSE (
+							SET abs_any_project_failed_flag=1
+							(ECHO FAILED: "%%f"   ERROR: !abs_return_value! [stopping current project])>>!abs_summary_report_file!
+						)
 					)
 				)
 			)
