@@ -16,7 +16,7 @@ echo "$auto_build_setting_initial_directory"
 
 # Have the build bot email the report when set to 1. If not using mailsend/emailing feature, just set to 0.
 auto_build_setting_email_report=1
-abs_project_failed_flag=0
+abs_any_project_failed_flag=0
 
 # When this is false, 0, the auto_update script will attempt to check the output from the source control update
 # for any modified files and if no files have been modified cancel the build prematurely, in a non failure
@@ -59,8 +59,6 @@ for d in $(find . -type f -name abs_build_configuration | xargs -n1 dirname); do
 	echo "Jumping into directory: $d"
 	pushd "$d"
 
-
-
 	# Set the default values for not so important flags, and clear out any important flags with var=
 	abs_return_value=0
 	abs_project_file_name=
@@ -69,34 +67,34 @@ for d in $(find . -type f -name abs_build_configuration | xargs -n1 dirname); do
 	# Load the configuration settings from the abs_build_configuration file into environment variables.
 	source ./abs_build_configuration
 
-	# IF "!abs_project_file_name!" == "" (
-	# 	SET abs_return_value=1
-	# 	SET abs_project_failed_flag=1
-	# 	(ECHO FAILED: "!pathLocalToCurrent!"   ERROR: abs_project_file_name configuration setting missing.)>>!abs_summary_report_file!
-	# ) else (
-	# 	ECHO Loaded build configuration for project !abs_project_file_name!
-	# )
+	
+	if [[ -z "$abs_project_file_name" ]]; then #test if var is empty or unset.
+		abs_any_project_failed_flag=1
+		echo FAILED: Invalid configuration file at: "$d"
+		printf "FAILED: %s   ERROR: abs_project_file_name configuration setting missing.\n" "$d" >> "$abs_summary_report_file"
+	else
+		echo Loaded build configuration for project $abs_project_file_name
 
+		for f in "${build_scripts[@]}" ; do
+			abs_return_value=0
+			#The source in "source script.sh" is important to pass abs variables to and from the called script.
+			source "$f"
 
-	for f in "${build_scripts[@]}" ; do
-		abs_return_value=0
-		#The source in "source script.sh" is important to pass abs variables to and from the called script.
-		source "$f"
-
-		if [[ "$abs_return_value" -eq 0 ]]; then
-			: # No operation, continue on to the next build phase.
-		else
-			if [[ $f == "auto_update.sh" ]]; then
-				if [[ abs_skip_if_no_updates -eq 1 ]]; then
-					break #No changes were found, no reason to build.
-				fi
+			if [[ "$abs_return_value" -eq 0 ]]; then
+				: # No operation, continue on to the next build phase.
 			else
-				abs_project_failed_flag=1
-				printf "FAILED: %s   ERROR: %s [stopping current project]\n" "$f" "$abs_return_value" >> "$abs_summary_report_file"
-				break
+				if [[ $f == "auto_update.sh" ]]; then
+					if [[ abs_skip_if_no_updates -eq 1 ]]; then
+						break #No changes were found, no reason to build.
+					fi
+				else
+					abs_any_project_failed_flag=1
+					printf "FAILED: %s   ERROR: %s [stopping current project]\n" "$f" "$abs_return_value" >> "$abs_summary_report_file"
+					break
+				fi
 			fi
-		fi
-	done
+		done
+	fi
 
 	if [[ "$abs_return_value" -eq 0 ]]; then
 		printf "PASSED: %s ran successfully.\n" "$d" >> "$abs_summary_report_file"
@@ -113,12 +111,10 @@ printf "Finished at: %s\n\n" "$timeanddatenow" >> "$abs_detailed_report_file"
 # Finally now that all the projects have been built, or their failures logged, it is time to email the report.
 # ---------------------------------------------------------------------------------------------------------------------#
 if [[ "$auto_build_setting_email_report" -eq 1 ]]; then
-#if [[ "$abs_project_failed_flag" -eq 0 ]]; then
-#
 	printf "\n\n=========================================\n" >> "$abs_summary_report_file"
 
 	fail_state=": linux success"
-	if [[ "$abs_project_failed_flag" -eq 1 ]]; then
+	if [[ "$abs_any_project_failed_flag" -eq 1 ]]; then
 		fail_state=": LINUX PROJECTS IN FAILURE STATE"
 	fi
 	echo "From: Auto Build Robot" > /tmp/abs_email_details.txt
