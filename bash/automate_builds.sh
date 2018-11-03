@@ -101,11 +101,12 @@ for d in $(find . -type f -name abs_build_configuration | xargs -n1 dirname); do
 				fi
 			fi
 		done
+
+		if [[ "$abs_return_value" -eq 0 ]]; then
+			printf "PASSED: %s ran successfully.\n" "$d" >> "$abs_summary_report_file"
+		fi
 	fi
 
-	if [[ "$abs_return_value" -eq 0 ]]; then
-		printf "PASSED: %s ran successfully.\n" "$d" >> "$abs_summary_report_file"
-	fi
 	popd > /dev/null
 done
 
