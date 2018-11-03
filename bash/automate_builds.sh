@@ -68,6 +68,16 @@ for d in $(find . -type f -name abs_build_configuration | xargs -n1 dirname); do
 	abs_build_version_revision=0
 	abs_skip_if_no_updates=0
 
+	# This is a great idea, but has two major issues to dig deeper into:
+	# 1. The config is used for both batch and bash scripts so the .bat vs .sh can't be added to script file.
+	# 2. Windows batch filepaths use backslashes for directories and bash uses forward slashs.
+	# 1 is easy by not specifying extension until calling hook, 2 may or may not be a big deal?
+	abs_hook_clean_script=
+	abs_hook_update_script=
+	abs_hook_build_script=
+	abs_hook_test_script=
+	abs_hook_deploy_script=
+	
 	# Load the configuration settings from the abs_build_configuration file into environment variables.
 	source ./abs_build_configuration
 
