@@ -63,6 +63,9 @@ for d in $(find . -type f -name abs_build_configuration | xargs -n1 dirname); do
 	abs_return_value=0
 	abs_project_file_name=
 	abs_project_friendly_name=
+	abs_build_version_major=0
+	abs_build_version_minor=0
+	abs_build_version_revision=0
 	abs_skip_if_no_updates=0
 
 	# Load the configuration settings from the abs_build_configuration file into environment variables.
