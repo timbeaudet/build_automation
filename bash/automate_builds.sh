@@ -84,6 +84,7 @@ for d in $(find . -type f -name abs_build_configuration | xargs -n1 dirname); do
 
 		for f in "${build_scripts[@]}" ; do
 			abs_return_value=1
+			echo Calling $f
 			#The source in "source script.sh" is important to pass abs variables to and from the called script.
 			source "$f"
 
