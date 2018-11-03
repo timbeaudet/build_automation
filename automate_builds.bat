@@ -86,6 +86,7 @@ FOR /r /d %%d IN (*) DO (
 		IF "!abs_project_file_name!" == "" (
 			SET abs_return_value=1
 			SET abs_project_failed_flag=1
+			ECHO FAILED: Invalid configuration file at: "!pathLocalToCurrent!"
 			(ECHO FAILED: "!pathLocalToCurrent!"   ERROR: abs_project_file_name configuration setting missing.)>>!abs_summary_report_file!
 		) else (
 			ECHO Loaded build configuration for project !abs_project_file_name!
