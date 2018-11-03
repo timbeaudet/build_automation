@@ -8,8 +8,6 @@
 # Available on github: https://www.github.com/timbeaudet/build_automation/ under the unlicense agreement.
 #---------------------------------------------------------------------------------------------------------------------#
 
-echo Running clean.sh from `pwd`
-
 premake5 --file="$abs_project_file_name.lua" clean
 
 kLinuxPlatform="Linux"
