@@ -44,13 +44,6 @@ if [[ -f "$abs_project_update_hook" ]]; then
 	# TODO: Check the return value from the hook and set failure if needed.
 fi
 
-# TODO: Would be nice to call build/initialize_externals.sh if that file exists.
-# abs_initialize_externals=`pwd`/initialize_externals.sh
-# if [[ -f "$abs_initialize_externals" ]]; then
-# 	source "$abs_initialize_externals"
-# 	# TODO: Check the return value from the hook and set failure if needed.
-# fi
-
 # Not exactly true, but nothing went wrong by default. This will set the value to 1 or 0 depending
 # on whether updates were found or not. NOTE: the primary script will not throw an error in this
 # very specific situation (abs_update script value 1) and instead will either continue or skip the

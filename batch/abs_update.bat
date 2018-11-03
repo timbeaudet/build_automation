@@ -63,13 +63,6 @@ IF EXIST %project_update_hook% (
 	REM TODO: Check the return value from the hook and set failure if needed.
 )
 
-REM TODO: Would be nice to call build/initialize_externals.sh if that file exists.
-REM SET abs_initialize_externals="%CD%\initialize_externals.bat"
-REM IF EXIST %abs_initialize_externals% (
-REM 	CALL %abs_initialize_externals%
-REM 	REM TODO: Check the return value from the hook and set failure if needed.
-REM )
-
 REM Not exactly true, but nothing went wrong by default. This will set the value to 1 or 0 depending
 REM on whether updates were found or not. NOTE: the primary script will not throw an error in this
 REM very specific situation (abs_update script value 1) and instead will either continue or skip the
