@@ -135,8 +135,7 @@ REM ----------------------------------------------------------------------------
 REM Finally now that all the projects have been built, or their failures logged, it is time to email the report.
 REM ---------------------------------------------------------------------------------------------------------------------#
 IF 1==%auto_build_setting_email_report% (
-
-	SET email_subject_line="Automated Build Report"
+	SET email_subject_line="Automated Build Report: windows success"
 	IF 1==%abs_any_project_failed_flag% (
 		SET email_subject_line="Automated Build Report: PROJECTS IN FAILURE STATE"	
 	)
