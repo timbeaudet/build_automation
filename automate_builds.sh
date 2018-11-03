@@ -113,12 +113,12 @@ printf "Finished at: %s\n\n" "$timeanddatenow" >> "$abs_detailed_report_file"
 if [[ "$auto_build_setting_email_report" -eq 1 ]]; then
 	printf "\n\n=========================================\n" >> "$abs_summary_report_file"
 
-	fail_state=": linux success"
+	email_subject_line="Automated Build Report: linux success"
 	if [[ "$abs_any_project_failed_flag" -eq 1 ]]; then
-		fail_state=": LINUX PROJECTS IN FAILURE STATE"
+		email_subject_line="Automated Build Report: LINUX PROJECTS IN FAILURE STATE"
 	fi
 	echo "From: Auto Build Robot" > /tmp/abs_email_details.txt
-	echo -e "Subject: Automated Build Report$fail_state\n\n" >> /tmp/abs_email_details.txt
+	echo -e "Subject: $email_subject_line\n\n" >> /tmp/abs_email_details.txt
 
 	abs_email_address=`cat abs_email_address.secret`
 	abs_email_report="$auto_build_setting_initial_directory/email_report.txt"
