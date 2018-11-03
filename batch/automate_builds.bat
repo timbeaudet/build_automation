@@ -137,7 +137,7 @@ REM ----------------------------------------------------------------------------
 IF 1==%auto_build_setting_email_report% (
 	SET email_subject_line="Automated Build Report: windows success"
 	IF 1==%abs_any_project_failed_flag% (
-		SET email_subject_line="Automated Build Report: PROJECTS IN FAILURE STATE"	
+		SET email_subject_line="Automated Build Report: PROJECTS IN FAILURE STATE"
 	)
 
 	(ECHO.
