@@ -97,6 +97,7 @@ FOR /r /d %%d IN (*) DO (
 
 			FOR %%f IN (%build_scripts%) DO (
 				IF 0==!abs_return_value! (
+					SET abs_return_value=1
 					ECHO Calling %%f
 					CALL %%f
 					IF 0==!abs_return_value! (
