@@ -107,7 +107,7 @@ for d in $(find . -type f -name abs_build_configuration | xargs -n1 dirname); do
 					fi
 				else
 					abs_any_project_failed_flag=1
-					printf "FAILED: %s   ERROR: %s [stopping current project]\n" "$f" "$abs_return_value" >> "$abs_summary_report_file"
+					printf "FAILED: %s   ERROR: %s [stopping current project]\n" "$d/[$f]" "$abs_return_value" >> "$abs_summary_report_file"
 					break
 				fi
 			fi
