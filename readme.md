@@ -2,7 +2,13 @@
 This project contains a set of batch and bash scripts to automate the build process of applications for Windows, Mac and Linux. It may be specific to my needs, but feel free to use any bits that may be useful.
 
 ## About
-By running ``automate_builds`` script, all projects within the current directory will be found and the build scripts will be ran. The project will get cleaned, then built. There are future plans to add support for updating the project before a clean build is performed, then potentially running a test and deploy script.
+By running ``automate_builds`` script, all projects within the current directory will be found and the build scripts will be ran. The project will get updated, cleaned, then built, tested then deployed. By default testing and deploy only calls the custom test/deploy steps.
+
+### Custom Steps
+
+During each of the build steps (update, clean, build, test, deploy) the project specific/custom script for that step will get called if it exists. The location and name of the file must match the step name like: `abs_build_hooks/project_step.yyy` where yyy is `.sh` or `.bat` pending system. These scripts will be invode from within the `/build/` directory and NOT from within `build/abs_build_hooks`.
+
+> Currently it is impossible to set a failure condition from the project specific/custom scripts. This is a desired feature of the build system; someday.
 
 ## Installation
 
