@@ -20,19 +20,32 @@ printf "========================================================\n" >> "$abs_det
 
 found_updates=0
 
+# if [[ -d .git ]]; then
+# 	git fetch origin
+# 	if [[ $(git log HEAD..origin/master --oneline) ]]; then
+# 		echo "Found modifications, updating repository."
+# 		git pull --rebase
+# 		found_updates=1
+# 	fi
+# else
+# 	if [[ $(svn merge --dry-run -r BASE:HEAD .) ]]; then
+# 		echo "Found modifications, updating repository."
+# 		svn update --quiet --non-interactive >> "$abs_detailed_report_file"
+# 		found_updates=1
+# 	fi
+# fi
+
+# The above does not account for svn externals and so when TurtleBrains or ICE is updated the
+# updates will not get pulled in. The following forces a pull/update to just grab anyway.
 if [[ -d .git ]]; then
 	git fetch origin
-	if [[ $(git log HEAD..origin/master --oneline) ]]; then
-		echo "Found modifications, updating repository."
-		git pull --rebase
-		found_updates=1
-	fi
+	echo "Forcing an update of git repository."
+	git pull --rebase
+	found_updates=1
 else
-	if [[ $(svn merge --dry-run -r BASE:HEAD .) ]]; then
-		echo "Found modifications, updating repository."
-		svn update --quiet --non-interactive >> "$abs_detailed_report_file"
-		found_updates=1
-	fi
+	echo "Forcing an update of svn repository."
+	svn update --quiet --non-interactive >> "$abs_detailed_report_file"
+	found_updates=1
 fi
 
 popd > /dev/null

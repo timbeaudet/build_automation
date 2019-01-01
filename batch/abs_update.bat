@@ -32,27 +32,46 @@ IF NOT DEFINED abs_detailed_report_file (
 
 SET found_updates=0
 
+ECHO "UPDATING FROM: %CD%"
+
+REM IF EXIST ".git\" (
+REM 	git fetch origin
+REM 	(git log HEAD..origin/master --oneline)>"%init_external_update_file%"
+REM 	set size=0
+REM 	FOR /f %%i in ("%init_external_update_file%") do set size=%%~zi
+REM 	IF !size! gtr 0 (
+REM 		ECHO "Found modifications, updating repository."
+REM 		git pull --rebase
+REM 		SET found_updates=1
+REM 	) ELSE (
+REM 		ECHO "No modifications were found."
+REM 	)
+REM 	DEL "%init_external_update_file%"
+REM ) ELSE (
+REM 	(svn merge --dry-run -r BASE:HEAD .)>"%init_external_update_file%"
+REM 	set size=0
+REM 	FOR /f %%i in ("%init_external_update_file%") do set size=%%~zi
+REM 	IF !size! gtr 0 (
+REM 		ECHO "Found modifications, updating repository."
+REM 		(svn update --quiet --non-interactive)>>%abs_detailed_report_file%
+REM 		SET found_updates=1
+REM 	) ELSE (
+REM 		ECHO "No modifications were found."
+REM 	)
+REM 	REM DEL "%init_external_update_file%"
+REM )
+
+REM The above does not account for svn externals and so when TurtleBrains or ICE is updated the
+REM updates will not get pulled in. The following forces a pull/update to just grab anyway.
 IF EXIST ".git\" (
 	git fetch origin
-	(git log HEAD..origin/master --oneline)>"%init_external_update_file%"
-	set size=0
-	FOR /f %%i in ("%init_external_update_file%") do set size=%%~zi
-	IF !size! gtr 0 (
-		ECHO "Found modifications, updating repository."
-		git pull --rebase
-		SET found_updates=1
-	)
-	DEL "%init_external_update_file%"
+	ECHO "Forcing an update of the git repository."
+	git pull --rebase
+	SET found_updates=1
 ) ELSE (
-	(svn merge --dry-run -r BASE:HEAD .)>"%init_external_update_file%"
-	set size=0
-	FOR /f %%i in ("%init_external_update_file%") do set size=%%~zi
-	IF !size! gtr 0 (
-		ECHO "Found modifications, updating repository."
-		(svn update --quiet --non-interactive)>>%abs_detailed_report_file%
-		SET found_updates=1
-	)
-	DEL "%init_external_update_file%"
+	ECHO "Forcing an update of the svn repository."
+	(svn update --quiet --non-interactive)>>%abs_detailed_report_file%
+	SET found_updates=1
 )
 
 POPD
