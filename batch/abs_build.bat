@@ -37,7 +37,7 @@ REM /flp1 is short for fileloggerparemeters:1 and sets up log file location and 
 SET extra_options=/nologo /maxcpucount /verbosity:quiet /flp1:logfile=%abs_detailed_report_file%;verbosity=quiet;append=true
 msbuild "windows/%abs_project_file_name%.sln" /property:Configuration=debug %extra_options%
 IF NOT 0 == %errorlevel% (
-	ECHO debug build failed
+	(ECHO debug build failed)>>%abs_detailed_report_file%
 	SET abs_build_had_failure=1
 )
 
@@ -48,7 +48,7 @@ IF NOT 0 == %errorlevel% (
 (ECHO.)>>%abs_detailed_report_file%
 msbuild "windows/%abs_project_file_name%.sln" /property:Configuration=release %extra_options%
 IF NOT 0 == %errorlevel% (
-	ECHO release build failed
+	(ECHO release build failed)>>%abs_detailed_report_file%
 	SET abs_build_had_failure=1
 )
 
