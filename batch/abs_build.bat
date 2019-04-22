@@ -28,6 +28,7 @@ IF NOT DEFINED abs_detailed_report_file (
 (ECHO.)>>%abs_detailed_report_file%
 (ECHO.)>>%abs_detailed_report_file%
 (ECHO building debug of %CD%)>>%abs_detailed_report_file%
+(ECHO "windows/%abs_project_file_name%.sln")>>%abs_detailed_report_file%
 (ECHO --------------------------------------------------------)>>%abs_detailed_report_file%
 (ECHO.)>>%abs_detailed_report_file%
 REM Without /maxcpucount msbuild will only use a single core, can specify a number /maxcpucount:2 or leave blank for all.
@@ -44,6 +45,7 @@ IF NOT 0 == %errorlevel% (
 (ECHO.)>>%abs_detailed_report_file%
 (ECHO.)>>%abs_detailed_report_file%
 (ECHO building release of %CD%)>>%abs_detailed_report_file%
+(ECHO "windows/%abs_project_file_name%.sln")>>%abs_detailed_report_file%
 (ECHO --------------------------------------------------------)>>%abs_detailed_report_file%
 (ECHO.)>>%abs_detailed_report_file%
 msbuild "windows/%abs_project_file_name%.sln" /property:Configuration=release %extra_options%
