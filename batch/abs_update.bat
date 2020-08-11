@@ -63,7 +63,12 @@ REM )
 
 REM The above does not account for svn externals and so when TurtleBrains or ICE is updated the
 REM updates will not get pulled in. The following forces a pull/update to just grab anyway.
-IF EXIST ".git\" (
+
+SET "using_git="
+IF "%abs_source_control%" == "git" SET using_git=1
+IF EXIST ".git\" SET using_git=1
+
+IF defined using_git (
 	git fetch origin
 	ECHO "Forcing an update of the git repository."
 	git pull --rebase

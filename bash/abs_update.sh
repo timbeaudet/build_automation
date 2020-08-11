@@ -37,7 +37,7 @@ found_updates=0
 
 # The above does not account for svn externals and so when TurtleBrains or ICE is updated the
 # updates will not get pulled in. The following forces a pull/update to just grab anyway.
-if [[ -d .git ]]; then
+if [[ -d .git ]] || [[ "$abs_source_control" == "git" ]]; then
 	git fetch origin
 	echo "Forcing an update of git repository."
 	git pull --rebase
