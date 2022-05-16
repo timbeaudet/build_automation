@@ -33,11 +33,11 @@ REM SET auto_build_setting_update_pass_always=1
 
 REM The abs_summary_report_file is the report that gets injected at the top of the email report, should provide a
 REM quick overview of all the projects that PASSED all build steps, as well as those that FAILED to complete.
-SET abs_summary_report_file="R:/abs_summary_report.txt"
+SET abs_summary_report_file="C:\development\temporary\abs_summary_report.txt"
 
 REM This abs_detailed_report_file is the report that contains all the warnings and errors for each project that reached 
 REM the build step, should they contain warnings or errors. Deleting it here to empty it out.
-SET abs_detailed_report_file="R:/auto_build_report.txt"
+SET abs_detailed_report_file="C:\development\temporary\auto_build_report.txt"
 DEL %abs_detailed_report_file%
 
 REM This should be set during each of the build steps, particularly for failures set this to a non-zero value which will
@@ -161,7 +161,7 @@ IF 1==%auto_build_setting_email_report% (
 	 ECHO.
  	)>>!abs_summary_report_file!
 
-	SET abs_email_report="R:\email_report.txt"
+	SET abs_email_report="C:\development\temporary\windows_email_report.txt"
 	COPY !abs_summary_report_file!+!abs_detailed_report_file! !abs_email_report!
 
 	REM The following script should set a variable named auto_build_settings_mailsend_credentials which contains the
