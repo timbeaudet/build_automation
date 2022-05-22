@@ -5,7 +5,7 @@ REM Automate Builds is a script to recursively search through a directory for au
 REM   in the specified order. Future revisions may allow the called script to return a value to continue or cancel the
 REM   calling of the remaining files.
 REM
-REM Available on github: https://www.github.com/timbeaudet/build_automation/ under the unliscense agreement.
+REM Available on github: https://www.github.com/timbeaudet/build_automation/ under the unlicense agreement.
 REM ---------------------------------------------------------------------------------------------------------------------#
 
 REM Apparently %var% gets expanded upon reading not during the command so when used
