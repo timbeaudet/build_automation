@@ -16,7 +16,7 @@ REM letter variable names, I attempted to use currentScript and childDirectory.
 SETLOCAL enableextensions ENABLEDELAYEDEXPANSION
 
 REM This is the set/list of scripts that will be called in the order given, left to right.
-SET build_scripts=abs_update.bat abs_clean.bat abs_build.bat abs_test.bat abs_deploy.bat
+SET build_scripts=abs_update.bat abs_clean.bat abs_build.bat abs_test.bat abs_deploy.bat abs_clean.bat
 
 REM 
 SET auto_build_setting_initial_directory=%CD%
