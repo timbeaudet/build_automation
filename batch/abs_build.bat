@@ -14,10 +14,12 @@ SET abs_build_had_failure=0
 premake5 --file="%abs_project_file_name%.lua" vs2015
 
 IF NOT DEFINED DevEnvDir (
-	REM Used on 32bit Windows XP machine with VisualStudio 2010
+	REM Used on cheetah: 32bit Windows XP machine with VisualStudio 2010
 	REM CALL "C:\Program Files\Microsoft Visual Studio 10.0\VC\vcvarsall.bat"
-	REM Used on 64bit Windows 10 machine with VisualStudio 2015
-	CALL "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat"
+	REM Used on falcon: 64bit Windows 10 machine with VisualStudio 2015
+	REM CALL "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat"
+	REM Used on moose: 64bit Windows 10 machine with VisualStudio 2022 Community
+	CALL "C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvarsall.bat" x86
 )
 
 IF NOT DEFINED abs_detailed_report_file (
@@ -36,7 +38,7 @@ REM /nologo hides a few lines being printed that we don't care about.
 REM /verbosity:quiet seems to give only warnings and errors about building the project.
 REM /flp1 is short for fileloggerparemeters:1 and sets up log file location and appends to it.
 SET extra_options=/nologo /maxcpucount /verbosity:quiet /flp1:logfile=%abs_detailed_report_file%;verbosity=quiet;append=true
-msbuild "windows/%abs_project_file_name%.sln" /property:Configuration=debug %extra_options%
+msbuild "windows/%abs_project_file_name%.sln" /property:Configuration=debug /p:Platform="Win32" %extra_options%
 IF NOT 0 == %errorlevel% (
 	(ECHO debug build failed)>>%abs_detailed_report_file%
 	SET abs_build_had_failure=1
@@ -48,7 +50,7 @@ IF NOT 0 == %errorlevel% (
 (ECHO "windows/%abs_project_file_name%.sln")>>%abs_detailed_report_file%
 (ECHO --------------------------------------------------------)>>%abs_detailed_report_file%
 (ECHO.)>>%abs_detailed_report_file%
-msbuild "windows/%abs_project_file_name%.sln" /property:Configuration=release %extra_options%
+msbuild "windows/%abs_project_file_name%.sln" /property:Configuration=release /p:Platform="Win32" %extra_options%
 IF NOT 0 == %errorlevel% (
 	(ECHO release build failed)>>%abs_detailed_report_file%
 	SET abs_build_had_failure=1
