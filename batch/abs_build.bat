@@ -56,6 +56,20 @@ IF NOT 0 == %errorlevel% (
 	SET abs_build_had_failure=1
 )
 
+IF 1 == %abs_build_public_config% (
+	(ECHO.)>>%abs_detailed_report_file%
+	(ECHO.)>>%abs_detailed_report_file%
+	(ECHO building public of %CD%)>>%abs_detailed_report_file%
+	(ECHO "windows/%abs_project_file_name%.sln")>>%abs_detailed_report_file%
+	(ECHO --------------------------------------------------------)>>%abs_detailed_report_file%
+	(ECHO.)>>%abs_detailed_report_file%
+	msbuild "windows/%abs_project_file_name%.sln" /property:Configuration=public /p:Platform="Win32" %extra_options%
+	IF NOT 0 == %errorlevel% (
+		(ECHO public build failed)>>%abs_detailed_report_file%
+		SET abs_build_had_failure=1
+	)
+)
+
 REM Call the user/project specific build hook script if it exists.
 SET abs_project_build_hook="%CD%\abs_build_hooks\project_build.bat"
 IF EXIST %abs_project_build_hook% (

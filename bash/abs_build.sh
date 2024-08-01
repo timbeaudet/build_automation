@@ -38,6 +38,15 @@ if [ $kLinuxPlatform = $currentPlatform ]; then
 		abs_build_had_failure=1
 	fi
 
+	if [ 1 -eq $abs_build_public_config ]
+		printf "\n\nbuilding public of: %s\n" `pwd` >> "$abs_detailed_report_file"
+		printf "========================================================\n" >> "$abs_detailed_report_file"
+		make config=public 2>> "$abs_detailed_report_file"
+		if [ $? -ne 0 ]; then
+			abs_build_had_failure=1
+		fi
+	fi
+
 	popd > /dev/null
 else
 	#Building a Mac OS X project
