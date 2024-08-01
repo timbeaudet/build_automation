@@ -26,22 +26,23 @@ if [ $kLinuxPlatform = $currentPlatform ]; then
 	printf "\n\nbuilding debug of: %s\n" `pwd` >> "$abs_detailed_report_file"
 	printf "========================================================\n" >> "$abs_detailed_report_file"
 	pushd linux > /dev/null
-	make config=debug 2>> "$abs_detailed_report_file"
+	make -j $(nproc) config=debug 2>> "$abs_detailed_report_file"
+	
 	if [ $? -ne 0 ]; then
 		abs_build_had_failure=1
 	fi
 
 	printf "\n\nbuilding release of: %s\n" `pwd` >> "$abs_detailed_report_file"
 	printf "========================================================\n" >> "$abs_detailed_report_file"
-	make config=release 2>> "$abs_detailed_report_file"
+	make -j $(nproc) config=release 2>> "$abs_detailed_report_file"
 	if [ $? -ne 0 ]; then
 		abs_build_had_failure=1
 	fi
 
-	if [ 1 -eq $abs_build_public_config ]
+	if [ 1 -eq $abs_build_public_config ]; then
 		printf "\n\nbuilding public of: %s\n" `pwd` >> "$abs_detailed_report_file"
 		printf "========================================================\n" >> "$abs_detailed_report_file"
-		make config=public 2>> "$abs_detailed_report_file"
+		make -j $(nproc) config=public 2>> "$abs_detailed_report_file"
 		if [ $? -ne 0 ]; then
 			abs_build_had_failure=1
 		fi
