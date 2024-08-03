@@ -16,7 +16,7 @@ REM letter variable names, I attempted to use currentScript and childDirectory.
 SETLOCAL enableextensions ENABLEDELAYEDEXPANSION
 
 REM This is the set/list of scripts that will be called in the order given, left to right.
-SET build_scripts=abs_update.bat abs_clean.bat abs_build.bat abs_test.bat abs_deploy.bat abs_clean.bat
+SET build_scripts=abs_update.bat abs_clean.bat abs_build.bat abs_test.bat abs_deploy.bat
 
 REM 
 SET auto_build_setting_initial_directory=%CD%
@@ -80,6 +80,7 @@ FOR /F "usebackq tokens=*" %%d in ("project_build_list.txt") do (
 		SET abs_build_version_revision=0
 		SET abs_skip_if_no_updates=0
 		SET abs_skip_public_config=0
+		SET abs_skip_final_clean=0
 
 		REM This is a great idea, but has two major issues to dig deeper into:
 		REM 1. The config is used for both batch and bash scripts so the .bat vs .sh can't be added to script file.
@@ -128,6 +129,10 @@ FOR /F "usebackq tokens=*" %%d in ("project_build_list.txt") do (
 						)
 					)
 				)
+			)
+
+			IF 0==!abs_skip_final_clean! (
+				CALL abs_clean.bat
 			)
 
 			IF 0==!abs_return_value! (
