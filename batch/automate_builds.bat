@@ -65,7 +65,8 @@ REM ----------------------------------------------------------------------------
 REM Now searching each child directory recursively, which appears to be breadth-first
 REM as it went cat, dog, bird, kitten, puppy when kitten was a child of cat and puppy
 REM a child of dog.
-FOR /r /d %%d IN (*) DO (
+REM FOR /r /d %%d IN (*) DO (
+FOR /F "usebackq tokens=*" %%d in ("project_build_list.txt") do (
 	PUSHD %%d\
 	SET pathLocalToCurrent=%%d
 	
