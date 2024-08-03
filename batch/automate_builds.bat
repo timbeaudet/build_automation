@@ -79,7 +79,7 @@ FOR /F "usebackq tokens=*" %%d in ("project_build_list.txt") do (
 		SET abs_build_version_minor=0
 		SET abs_build_version_revision=0
 		SET abs_skip_if_no_updates=0
-		SET abs_build_public_config=0
+		SET abs_skip_public_config=0
 
 		REM This is a great idea, but has two major issues to dig deeper into:
 		REM 1. The config is used for both batch and bash scripts so the .bat vs .sh can't be added to script file.
