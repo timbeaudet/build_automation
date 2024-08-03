@@ -53,9 +53,10 @@ printf "Started at: %s\n\n" "$timeanddatenow" >> "$abs_detailed_report_file"
 # Above: Making the detailed and summary reports nice and tidy including introduction stuff.
 # Below: Search the current directory for the build scripts before child directories.
 # ---------------------------------------------------------------------------------------------------------------------#
-for d in $(find . -type f -name abs_build_configuration | xargs -n1 dirname); do
+#for d in $(find . -type f -name abs_build_configuration | xargs -n1 dirname); do
 	#This does skip the edge-case that the automated_builds script was run from a directory named 'automated'
 
+while IFS= read -r d; do
 	echo "Jumping into directory: $d"
 	pushd "$d"
 
@@ -120,7 +121,7 @@ for d in $(find . -type f -name abs_build_configuration | xargs -n1 dirname); do
 	fi
 
 	popd > /dev/null
-done
+done < project_build_list.txt
 
 timeanddatenow=`date`
 printf "\nAuto Build Robot has finished building projects.\n" >> "$abs_summary_report_file"
