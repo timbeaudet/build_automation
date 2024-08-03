@@ -67,6 +67,7 @@ for d in $(find . -type f -name abs_build_configuration | xargs -n1 dirname); do
 	abs_build_version_minor=0
 	abs_build_version_revision=0
 	abs_skip_if_no_updates=0
+	abs_skip_public_config=0
 
 	# This is a great idea, but has two major issues to dig deeper into:
 	# 1. The config is used for both batch and bash scripts so the .bat vs .sh can't be added to script file.
