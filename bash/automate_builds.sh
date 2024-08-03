@@ -69,6 +69,7 @@ while IFS= read -r d; do
 	abs_build_version_revision=0
 	abs_skip_if_no_updates=0
 	abs_skip_public_config=0
+	abs_skip_final_clean=0
 
 	# This is a great idea, but has two major issues to dig deeper into:
 	# 1. The config is used for both batch and bash scripts so the .bat vs .sh can't be added to script file.
@@ -117,6 +118,10 @@ while IFS= read -r d; do
 
 		if [[ "$abs_return_value" -eq 0 ]]; then
 			printf "PASSED: %s ran successfully.\n" "$d" >> "$abs_summary_report_file"
+		fi
+
+		if [[ "$abs_skip_final_clean" -eq 0 ]]; then
+			source "abs_clean.sh"
 		fi
 	fi
 
