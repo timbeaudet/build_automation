@@ -131,12 +131,12 @@ FOR /F "usebackq tokens=*" %%d in ("project_build_list.txt") do (
 				)
 			)
 
-			IF 0==!abs_skip_final_clean! (
-				CALL abs_clean.bat
-			)
-
 			IF 0==!abs_return_value! (
 				(ECHO PASSED: "!pathLocalToCurrent!" ran successfully.)>>!abs_summary_report_file!
+			)
+
+			IF 0==!abs_skip_final_clean! (
+				CALL abs_clean.bat
 			)
 		)
 	)
