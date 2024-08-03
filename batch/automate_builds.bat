@@ -67,9 +67,9 @@ REM as it went cat, dog, bird, kitten, puppy when kitten was a child of cat and 
 REM a child of dog.
 REM FOR /r /d %%d IN (*) DO (
 FOR /F "usebackq tokens=*" %%d in ("project_build_list.txt") do (
-	PUSHD %%d\
+	PUSHD .\%%d\
 	SET pathLocalToCurrent=%%d
-	
+
 	IF EXIST abs_build_configuration (
 		REM Set the default values for not so important flags, and clear out any important flags with var=
 		SET abs_return_value=0
