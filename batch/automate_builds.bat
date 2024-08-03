@@ -16,7 +16,7 @@ REM letter variable names, I attempted to use currentScript and childDirectory.
 SETLOCAL enableextensions ENABLEDELAYEDEXPANSION
 
 REM This is the set/list of scripts that will be called in the order given, left to right.
-SET build_scripts=abs_update.bat abs_clean.bat abs_build.bat abs_test.bat abs_deploy.bat abs_clean.bat
+SET build_scripts=abs_update.bat abs_clean.bat abs_build.bat abs_test.bat abs_deploy.bat
 
 REM 
 SET auto_build_setting_initial_directory=%CD%
@@ -65,10 +65,11 @@ REM ----------------------------------------------------------------------------
 REM Now searching each child directory recursively, which appears to be breadth-first
 REM as it went cat, dog, bird, kitten, puppy when kitten was a child of cat and puppy
 REM a child of dog.
-FOR /r /d %%d IN (*) DO (
-	PUSHD %%d\
+REM FOR /r /d %%d IN (*) DO (
+FOR /F "usebackq tokens=*" %%d in ("project_build_list.txt") do (
+	PUSHD .\%%d\
 	SET pathLocalToCurrent=%%d
-	
+
 	IF EXIST abs_build_configuration (
 		REM Set the default values for not so important flags, and clear out any important flags with var=
 		SET abs_return_value=0
@@ -78,7 +79,8 @@ FOR /r /d %%d IN (*) DO (
 		SET abs_build_version_minor=0
 		SET abs_build_version_revision=0
 		SET abs_skip_if_no_updates=0
-		SET abs_build_public_config=0
+		SET abs_skip_public_config=0
+		SET abs_skip_final_clean=0
 
 		REM This is a great idea, but has two major issues to dig deeper into:
 		REM 1. The config is used for both batch and bash scripts so the .bat vs .sh can't be added to script file.
@@ -131,6 +133,10 @@ FOR /r /d %%d IN (*) DO (
 
 			IF 0==!abs_return_value! (
 				(ECHO PASSED: "!pathLocalToCurrent!" ran successfully.)>>!abs_summary_report_file!
+			)
+
+			IF 0==!abs_skip_final_clean! (
+				CALL abs_clean.bat
 			)
 		)
 	)

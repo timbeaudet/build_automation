@@ -39,11 +39,11 @@ found_updates=0
 # updates will not get pulled in. The following forces a pull/update to just grab anyway.
 if [[ -d .git ]] || [[ "$abs_source_control" == "git" ]]; then
 	git fetch origin
-	echo "Forcing an update of git repository."
+	echo "Forcing an update of git repository." >> "$abs_detailed_report_file"
 	git pull --rebase
 	found_updates=1
 else
-	echo "Forcing an update of svn repository."
+	echo "Forcing an update of svn repository." >> "$abs_detailed_report_file"
 	svn update --quiet --non-interactive >> "$abs_detailed_report_file"
 	found_updates=1
 fi

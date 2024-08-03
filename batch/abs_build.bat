@@ -56,7 +56,7 @@ IF NOT 0 == %errorlevel% (
 	SET abs_build_had_failure=1
 )
 
-IF 1 == %abs_build_public_config% (
+IF 0 == %abs_skip_public_config% (
 	(ECHO.)>>%abs_detailed_report_file%
 	(ECHO.)>>%abs_detailed_report_file%
 	(ECHO building public of %CD%)>>%abs_detailed_report_file%

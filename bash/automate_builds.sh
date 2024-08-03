@@ -53,9 +53,10 @@ printf "Started at: %s\n\n" "$timeanddatenow" >> "$abs_detailed_report_file"
 # Above: Making the detailed and summary reports nice and tidy including introduction stuff.
 # Below: Search the current directory for the build scripts before child directories.
 # ---------------------------------------------------------------------------------------------------------------------#
-for d in $(find . -type f -name abs_build_configuration | xargs -n1 dirname); do
+#for d in $(find . -type f -name abs_build_configuration | xargs -n1 dirname); do
 	#This does skip the edge-case that the automated_builds script was run from a directory named 'automated'
 
+while IFS= read -r d; do
 	echo "Jumping into directory: $d"
 	pushd "$d"
 
@@ -67,6 +68,8 @@ for d in $(find . -type f -name abs_build_configuration | xargs -n1 dirname); do
 	abs_build_version_minor=0
 	abs_build_version_revision=0
 	abs_skip_if_no_updates=0
+	abs_skip_public_config=0
+	abs_skip_final_clean=0
 
 	# This is a great idea, but has two major issues to dig deeper into:
 	# 1. The config is used for both batch and bash scripts so the .bat vs .sh can't be added to script file.
@@ -116,10 +119,14 @@ for d in $(find . -type f -name abs_build_configuration | xargs -n1 dirname); do
 		if [[ "$abs_return_value" -eq 0 ]]; then
 			printf "PASSED: %s ran successfully.\n" "$d" >> "$abs_summary_report_file"
 		fi
+
+		if [[ "$abs_skip_final_clean" -eq 0 ]]; then
+			source "abs_clean.sh"
+		fi
 	fi
 
 	popd > /dev/null
-done
+done < project_build_list.txt
 
 timeanddatenow=`date`
 printf "\nAuto Build Robot has finished building projects.\n" >> "$abs_summary_report_file"
