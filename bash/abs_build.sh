@@ -6,7 +6,7 @@
 #
 # This may be run by an automated process to clean and/or build each project with an /automated/auto_ script.
 #
-# Available on github: https://www.github.com/timbeaudet/build_automation/ under the unliscense agreement.
+# Available on github: https://www.github.com/timbeaudet/build_automation/ under the unlicense agreement.
 #---------------------------------------------------------------------------------------------------------------------#
 
 abs_build_had_failure=0

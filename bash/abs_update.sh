@@ -4,7 +4,7 @@
 # Automated Build Script to automate the update process by grabbing the latest from the source
 # control repository, used here is Git if .git directory exists one directory back, or subversion (svn) if not.
 #
-# Available on github: https://www.github.com/timbeaudet/build_automation/ under the unliscense agreement.
+# Available on github: https://www.github.com/timbeaudet/build_automation/ under the unlicense agreement.
 #---------------------------------------------------------------------------------------------------------------------#
 
 # This should go back to project_root to update, which by default is 1 levels back from: project_root/build/

@@ -7,7 +7,7 @@ REM configuration file that would allow running the executables in testmode some
 REM
 REM This may be run by an automated process to clean and/or build each project with an /automated/auto_ script.
 REM
-REM Available on github: https://www.github.com/timbeaudet/build_automation/ under the unliscense agreement.
+REM Available on github: https://www.github.com/timbeaudet/build_automation/ under the unlicense agreement.
 REM -------------------------------------------------------------------------------------------------------------------
 
 REM Call the user/project specific test hook script if it exists.

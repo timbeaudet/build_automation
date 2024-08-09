@@ -4,7 +4,7 @@ REM
 REM Automated Build Script to automate the update process by grabbing the latest from the source
 REM control repository, used here is Git if .git directory exists one directory back, or subversion (svn) if not.
 REM
-REM Available on github: https://www.github.com/timbeaudet/build_automation/ under the unliscense agreement.
+REM Available on github: https://www.github.com/timbeaudet/build_automation/ under the unlicense agreement.
 REM -------------------------------------------------------------------------------------------------------------------
 
 REM This should go back to project_root to update, which is expected to be 1 level back from: project_root/build/

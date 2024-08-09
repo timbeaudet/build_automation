@@ -5,7 +5,7 @@ REM Automated Build Script for TEMPLATE_PROJECT_NAME to automate the cleaning of
 REM
 REM This may be run by an automated process to clean and/or build each project with an /automated/auto_ script.
 REM
-REM Available on github: https://www.github.com/timbeaudet/build_automation/ under the unliscense agreement.
+REM Available on github: https://www.github.com/timbeaudet/build_automation/ under the unlicense agreement.
 REM -------------------------------------------------------------------------------------------------------------------
 
 premake5 --file="%abs_project_file_name%.lua" clean
