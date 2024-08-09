@@ -37,8 +37,9 @@ REM Without /maxcpucount msbuild will only use a single core, can specify a numb
 REM /nologo hides a few lines being printed that we don't care about.
 REM /verbosity:quiet seems to give only warnings and errors about building the project.
 REM /flp1 is short for fileloggerparemeters:1 and sets up log file location and appends to it.
-SET extra_options=/nologo /maxcpucount /verbosity:quiet /flp1:logfile=%abs_detailed_report_file%;verbosity=quiet;append=true
-msbuild "windows/%abs_project_file_name%.sln" /property:Configuration=debug /p:Platform="Win32" %extra_options%
+@REM SET extra_options=/nologo /maxcpucount /verbosity:quiet /flp1:logfile=%abs_detailed_report_file%;verbosity=quiet;append=true
+@REM msbuild "windows/%abs_project_file_name%.sln" /property:Configuration=debug /p:Platform="Win32" %extra_options%
+CALL make_project.bat --windows --build --debug
 IF NOT 0 == %errorlevel% (
 	(ECHO debug build failed)>>%abs_detailed_report_file%
 	SET abs_build_had_failure=1
@@ -50,7 +51,8 @@ IF NOT 0 == %errorlevel% (
 (ECHO "windows/%abs_project_file_name%.sln")>>%abs_detailed_report_file%
 (ECHO --------------------------------------------------------)>>%abs_detailed_report_file%
 (ECHO.)>>%abs_detailed_report_file%
-msbuild "windows/%abs_project_file_name%.sln" /property:Configuration=release /p:Platform="Win32" %extra_options%
+@REM msbuild "windows/%abs_project_file_name%.sln" /property:Configuration=release /p:Platform="Win32" %extra_options%
+CALL make_project.bat --windows --build --release
 IF NOT 0 == %errorlevel% (
 	(ECHO release build failed)>>%abs_detailed_report_file%
 	SET abs_build_had_failure=1
@@ -63,7 +65,8 @@ IF 0 == %abs_skip_public_config% (
 	(ECHO "windows/%abs_project_file_name%.sln")>>%abs_detailed_report_file%
 	(ECHO --------------------------------------------------------)>>%abs_detailed_report_file%
 	(ECHO.)>>%abs_detailed_report_file%
-	msbuild "windows/%abs_project_file_name%.sln" /property:Configuration=public /p:Platform="Win32" %extra_options%
+	@REM msbuild "windows/%abs_project_file_name%.sln" /property:Configuration=public /p:Platform="Win32" %extra_options%
+	CALL make_project.bat --windows --build --public
 	IF NOT 0 == %errorlevel% (
 		(ECHO public build failed)>>%abs_detailed_report_file%
 		SET abs_build_had_failure=1
