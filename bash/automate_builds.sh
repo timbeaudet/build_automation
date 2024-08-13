@@ -145,10 +145,21 @@ printf "Finished at: %s\n\n" "$timeanddatenow" >> "$abs_detailed_report_file"
 if [[ "$auto_build_setting_email_report" -eq 1 ]]; then
 	printf "\n\n=========================================\n" >> "$abs_summary_report_file"
 
-	email_subject_line="Automated Build Report: linux success"
-	if [[ "$abs_any_project_failed_flag" -eq 1 ]]; then
-		email_subject_line="Automated Build Report: LINUX PROJECTS IN FAILURE STATE"
+	kLinuxPlatform="Linux"
+	currentPlatform=`uname`
+	if [ $kLinuxPlatform = $currentPlatform ]; then
+#	if [ "Linux" = `uname` ]; then
+		email_subject_line="Automated Build Report: linux success"
+		if [[ "$abs_any_project_failed_flag" -eq 1 ]]; then
+			email_subject_line="Automated Build Report: LINUX PROJECTS IN FAILURE STATE"
+		fi
+	else
+		email_subject_line="Automated Build Report: macOS success"
+		if [[ "$abs_any_project_failed_flag" -eq 1 ]]; then
+			email_subject_line="Automated Build Report: MACOS PROJECTS IN FAILURE STATE"
+		fi
 	fi
+
 	echo "From: Auto Build Robot" > /tmp/abs_email_details.txt
 	echo -e "Subject: $email_subject_line\n\n" >> /tmp/abs_email_details.txt
 
