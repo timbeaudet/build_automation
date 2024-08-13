@@ -32,19 +32,24 @@ if [ ! -z "${abs_test_flag}" ]; then
 	testFlag=${abs_test_flag}
 fi
 
+if [[ $abs_skip_testing -ne 0 ]]; then
+	printf "\n\nskipped running tests for: %s/%s%s_release %s\n" `pwd` ${testExecutable} ${testSystem} ${testFlag} >> "$abs_detailed_report_file"
+	printf "========================================================\n" >> "$abs_detailed_report_file"
+	return 0
+fi
+
 pushd ../run/ > /dev/null
 
 printf "\n\nrunning tests for: %s/%s%s_release %s\n" `pwd` ${testExecutable} ${testSystem} ${testFlag} >> "$abs_detailed_report_file"
 printf "========================================================\n" >> "$abs_detailed_report_file"
 
-if [[ $abs_skip_testing -eq 0 ]]; then
-	"./${testExecutable}${testSystem}_release" ${testFlag} 2>&1 >> "$abs_detailed_report_file"
-	if [ $? -ne 0 ]; then
-		abs_return_value=1
-	fi
+"./${testExecutable}${testSystem}_release" ${testFlag} 2>&1 >> "$abs_detailed_report_file"
+if [ $? -ne 0 ]; then
+	abs_return_value=1
 fi
 
 popd > /dev/null
+
 
 # Call the user/project specific test hook script if it exists.
 abs_project_test_hook=`pwd`/abs_build_hooks/project_test.sh
