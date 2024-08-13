@@ -142,7 +142,7 @@ FOR /F "usebackq tokens=*" %%d in ("project_build_list.txt") do (
 				CALL abs_clean.bat
 				IF EXIST .\externals (
 					DEL /F /S /Q .\externals 1>NUL
-					RMDIR .\externals
+					RMDIR /S /Q .\externals
 				)
 			)
 		)
