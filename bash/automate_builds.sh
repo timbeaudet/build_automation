@@ -64,11 +64,14 @@ while IFS= read -r d; do
 	abs_return_value=0
 	abs_project_file_name=
 	abs_project_friendly_name=
+	abs_test_executable=
+	abs_test_flag=
 	abs_build_version_major=0
 	abs_build_version_minor=0
 	abs_build_version_revision=0
 	abs_skip_if_no_updates=0
 	abs_skip_public_config=0
+	abs_skip_testing=0
 	abs_skip_final_clean=0
 
 	# This is a great idea, but has two major issues to dig deeper into:
@@ -122,6 +125,9 @@ while IFS= read -r d; do
 
 		if [[ "$abs_skip_final_clean" -eq 0 ]]; then
 			source "abs_clean.sh"
+			if [ -d ./externals ]; then
+				rm -rf ./externals
+			fi
 		fi
 	fi
 

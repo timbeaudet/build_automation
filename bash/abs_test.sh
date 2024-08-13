@@ -10,12 +10,45 @@
 # Available on github: https://www.github.com/timbeaudet/build_automation/ under the unlicense agreement.
 #---------------------------------------------------------------------------------------------------------------------#
 
+abs_return_value=0 #Everything is good, until it isn't.
+
+testSystem=
+kLinuxPlatform="Linux"
+currentPlatform=`uname`
+if [ $kLinuxPlatform = $currentPlatform ]; then
+	testSystem=_linux
+fi
+
+testExecutable=${abs_project_file_name}
+printf "\n\nDEBUG: testExe from filename: %s\n" ${testExecutable} >> "$abs_detailed_report_file"
+
+if [ ! -z "${abs_test_executable}" ]; then
+	testExecutable=${abs_test_executable}
+	printf "\n\nDEBUG: testExe from config: %s\n" ${testExecutable} >> "$abs_detailed_report_file"
+fi
+
+testFlag=--test
+if [ ! -z "${abs_test_flag}" ]; then
+	testFlag=${abs_test_flag}
+fi
+
+pushd ../run/ > /dev/null
+
+printf "\n\nrunning tests for: %s/%s%s_release %s\n" `pwd` ${testExecutable} ${testSystem} ${testFlag} >> "$abs_detailed_report_file"
+printf "========================================================\n" >> "$abs_detailed_report_file"
+
+if [[ $abs_skip_testing -eq 0 ]]; then
+	"./${testExecutable}${testSystem}_release" ${testFlag} 2>&1 >> "$abs_detailed_report_file"
+	if [ $? -ne 0 ]; then
+		abs_return_value=1
+	fi
+fi
+
+popd > /dev/null
+
 # Call the user/project specific test hook script if it exists.
 abs_project_test_hook=`pwd`/abs_build_hooks/project_test.sh
 if [[ -f "$abs_project_test_hook" ]]; then
 	source "$abs_project_test_hook"
 	# TODO: Check the return value from the hook and set failure if needed.
 fi
-
-# Nothing can really go terribly wrong in testing until that todo is fixed, can it?
-abs_return_value=0

@@ -25,16 +25,17 @@ if [ $kLinuxPlatform = $currentPlatform ]; then
 	
 	printf "\n\nbuilding debug of: %s\n" `pwd` >> "$abs_detailed_report_file"
 	printf "========================================================\n" >> "$abs_detailed_report_file"
-	pushd linux > /dev/null
-	make -j $(nproc) config=debug 2>> "$abs_detailed_report_file"
-	#make_project.sh -j $(nproc) --linux --debug 2>> "$abs_detailed_report_file"
+	#pushd linux > /dev/null
+	#make -j $(nproc) config=debug 2>> "$abs_detailed_report_file"
+	source make_project.sh -j $(nproc) --linux --build --debug 2>> "$abs_detailed_report_file"
 	if [ $? -ne 0 ]; then
 		abs_build_had_failure=1
 	fi
 
 	printf "\n\nbuilding release of: %s\n" `pwd` >> "$abs_detailed_report_file"
 	printf "========================================================\n" >> "$abs_detailed_report_file"
-	make -j $(nproc) config=release 2>> "$abs_detailed_report_file"
+	#make -j $(nproc) config=release 2>> "$abs_detailed_report_file"
+	source make_project.sh -j $(nproc) --linux --build --release 2>> "$abs_detailed_report_file"
 	if [ $? -ne 0 ]; then
 		abs_build_had_failure=1
 	fi
@@ -42,13 +43,14 @@ if [ $kLinuxPlatform = $currentPlatform ]; then
 	if [ 0 -eq $abs_skip_public_config ]; then
 		printf "\n\nbuilding public of: %s\n" `pwd` >> "$abs_detailed_report_file"
 		printf "========================================================\n" >> "$abs_detailed_report_file"
-		make -j $(nproc) config=public 2>> "$abs_detailed_report_file"
+		#make -j $(nproc) config=public 2>> "$abs_detailed_report_file"
+		source make_project.sh -j $(nproc) --linux --build --public 2>> "$abs_detailed_report_file"
 		if [ $? -ne 0 ]; then
 			abs_build_had_failure=1
 		fi
 	fi
 
-	popd > /dev/null
+	#popd > /dev/null
 else
 	#Building a Mac OS X project
 	premake5 --file="$abs_project_file_name.lua" xcode4
