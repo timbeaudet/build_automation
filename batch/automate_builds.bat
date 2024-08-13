@@ -75,11 +75,14 @@ FOR /F "usebackq tokens=*" %%d in ("project_build_list.txt") do (
 		SET abs_return_value=0
 		SET abs_project_file_name=
 		SET abs_project_friendly_name=
+		SET abs_test_executable=
+		SET abs_test_flag=
 		SET abs_build_version_major=0
 		SET abs_build_version_minor=0
 		SET abs_build_version_revision=0
 		SET abs_skip_if_no_updates=0
 		SET abs_skip_public_config=0
+		SET abs_skip_testing=0
 		SET abs_skip_final_clean=0
 
 		REM This is a great idea, but has two major issues to dig deeper into:
@@ -137,6 +140,10 @@ FOR /F "usebackq tokens=*" %%d in ("project_build_list.txt") do (
 
 			IF 0==!abs_skip_final_clean! (
 				CALL abs_clean.bat
+				IF EXIST .\externals (
+					DEL /F /S /Q .\externals 1>NUL
+					RMDIR .\externals
+				)
 			)
 		)
 	)
