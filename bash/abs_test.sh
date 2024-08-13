@@ -16,7 +16,9 @@ testSystem=
 kLinuxPlatform="Linux"
 currentPlatform=`uname`
 if [ $kLinuxPlatform = $currentPlatform ]; then
-	testSystem=_linux
+	testSystem=linux
+else
+	testSystem=macos
 fi
 
 testExecutable=${abs_project_file_name}
@@ -40,10 +42,10 @@ fi
 
 pushd ../run/ > /dev/null
 
-printf "\n\nrunning tests for: %s/%s%s_release %s\n" `pwd` ${testExecutable} ${testSystem} ${testFlag} >> "$abs_detailed_report_file"
+printf "\n\nrunning tests for: %s/%s_%s_release %s\n" `pwd` ${testExecutable} ${testSystem} ${testFlag} >> "$abs_detailed_report_file"
 printf "========================================================\n" >> "$abs_detailed_report_file"
 
-"./${testExecutable}${testSystem}_release" ${testFlag} 2>&1 >> "$abs_detailed_report_file"
+"./${testExecutable}_${testSystem}_release" ${testFlag} 2>&1 >> "$abs_detailed_report_file"
 if [ $? -ne 0 ]; then
 	abs_return_value=1
 fi

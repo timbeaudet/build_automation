@@ -59,14 +59,28 @@ else
 	printf "\n\nbuilding debug of: %s\n" `pwd` >> "$abs_detailed_report_file"
 	printf "========================================================\n" >> "$abs_detailed_report_file"
 	#xcodebuild -target "$abs_project_file_name" -configuration debug build
-	make_project.sh --build --debug
+	printf "Running make_project from %s" `pwd`
+	source make_project.sh --macos --build --debug
 	if [ $? -ne 0 ]; then
 		abs_build_had_failure=1
 	fi
 
 	printf "\n\nbuilding release of: %s\n" `pwd` >> "$abs_detailed_report_file"
 	printf "========================================================\n" >> "$abs_detailed_report_file"
-	xcodebuild -target "$abs_project_file_name" -configuration release build
+	#xcodebuild -target "$abs_project_file_name" -configuration release build
+	source make_project.sh --macos --build --release
+	if [ $? -ne 0 ]; then
+		abs_build_had_failure=1
+	fi
+
+	if [ 0 -eq $abs_skip_public_config ]; then
+		printf "\n\nbuilding public of: %s\n" `pwd` >> "$abs_detailed_report_file"
+		printf "========================================================\n" >> "$abs_detailed_report_file"
+		source make_project.sh --macos --build --public
+		if [ $? -ne 0 ]; then
+			abs_build_had_failure=1
+		fi
+	fi
 
 	#popd > /dev/null
 fi
