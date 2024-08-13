@@ -27,28 +27,29 @@ IF DEFINED abs_test_flag (
 
 ECHO Debug testFlag was set to: %testFlag%
 
-IF 0 == %abs_skip_testing% (
-	PUSHD ..\run\
-	(ECHO.)>>%abs_detailed_report_file%
-	(ECHO.)>>%abs_detailed_report_file%
-	(ECHO "running tests for /run/%testExecutable%_release %testFlag%")>>%abs_detailed_report_file%
-	(ECHO --------------------------------------------------------)>>%abs_detailed_report_file%
-
-	ECHO Debug trying to run CALL ../run/%testExecutable%_release %testFlag%
-
-	(%testExecutable%_release %testFlag%)>>%abs_detailed_report_file%
-	IF NOT 0 == %errorlevel% (
-		(ECHO %abs_project_friendly_name% failed unit tests)>>%abs_detailed_report_file%
-		SET abs_return_value=1
-	)
-
-	POPD
-) ELSE (
+IF %abs_skip_testing% NEQ 0 (
 	(ECHO.)>>%abs_detailed_report_file%
 	(ECHO.)>>%abs_detailed_report_file%
 	(ECHO "skipped running tests for /run/%testExecutable%_release %testFlag%")>>%abs_detailed_report_file%
 	(ECHO --------------------------------------------------------)>>%abs_detailed_report_file%
+	EXIT /B 0
 )
+
+PUSHD ..\run\
+(ECHO.)>>%abs_detailed_report_file%
+(ECHO.)>>%abs_detailed_report_file%
+(ECHO "running tests for /run/%testExecutable%_release %testFlag%")>>%abs_detailed_report_file%
+(ECHO --------------------------------------------------------)>>%abs_detailed_report_file%
+
+ECHO Debug trying to run CALL ../run/%testExecutable%_release %testFlag%
+
+(%testExecutable%_release %testFlag%) 2>&1 >> %abs_detailed_report_file%
+IF NOT 0 == %errorlevel% (
+	(ECHO %abs_project_friendly_name% failed unit tests)>>%abs_detailed_report_file%
+	SET abs_return_value=1
+)
+
+POPD
 
 ECHO Debug checking build hook
 REM Call the user/project specific test hook script if it exists.
