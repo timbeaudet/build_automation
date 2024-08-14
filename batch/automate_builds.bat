@@ -18,8 +18,9 @@ SETLOCAL enableextensions ENABLEDELAYEDEXPANSION
 REM This is the set/list of scripts that will be called in the order given, left to right.
 SET build_scripts=abs_update.bat abs_clean.bat abs_build.bat abs_test.bat abs_deploy.bat
 
-REM 
+REM
 SET auto_build_setting_initial_directory=%CD%
+SET abs_automating_builds=1
 
 REM Have the build bot email the report when set to 1. If not using mailsend/emailing feature, just set to 0.
 SET auto_build_setting_email_report=1
@@ -192,6 +193,8 @@ IF 1==%auto_build_setting_email_report% (
 		ECHO Warning: Unable to use mailsend to send an email, credentials were not setup properly.
 	)
 )
+
+SET abs_automating_builds=0
 
 GOTO :EOF
 PAUSE

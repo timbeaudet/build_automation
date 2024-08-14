@@ -13,6 +13,7 @@ declare -a build_scripts=("abs_update.sh" "abs_clean.sh" "abs_build.sh" "abs_tes
 
 auto_build_setting_initial_directory=$(pwd)
 echo "$auto_build_setting_initial_directory"
+abs_automating_builds=true
 
 # Have the build bot email the report when set to 1. If not using mailsend/emailing feature, just set to 0.
 auto_build_setting_email_report=1
@@ -183,3 +184,5 @@ if [[ "$auto_build_setting_email_report" -eq 1 ]]; then
 #	)
 #fi
 fi
+
+abs_automating_builds=false
