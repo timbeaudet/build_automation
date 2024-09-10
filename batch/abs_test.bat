@@ -33,12 +33,21 @@ IF %abs_skip_testing% NEQ 0 (
 PUSHD ..\run\
 (ECHO.)>>%abs_detailed_report_file%
 (ECHO.)>>%abs_detailed_report_file%
-(ECHO "running tests for /run/%testExecutable%_release %testFlag%")>>%abs_detailed_report_file%
+(ECHO "running tests for /run/%testExecutable%_release.exe %testFlag%")>>%abs_detailed_report_file%
 (ECHO --------------------------------------------------------)>>%abs_detailed_report_file%
 
-(%testExecutable%_release %testFlag%) 2>&1 >> %abs_detailed_report_file%
+(ECHO "error level before setting and running test: %errorlevel%")>>%abs_detailed_report_file%
+COLOR 9
+(ECHO "error level JUST before running test: %errorlevel%")>>%abs_detailed_report_file%
+
+REM (%testExecutable%_release.exe %testFlag%) 2>&1 >> %abs_detailed_report_file%
+(%testExecutable%_release.exe %testFlag%) 2>> %abs_detailed_report_file%
+(TYPE .\test_results.txt) >> %abs_detailed_report_file%
+(ECHO.)>>%abs_detailed_report_file%
+(ECHO.)>>%abs_detailed_report_file%
+
 IF NOT 0 == %errorlevel% (
-	(ECHO %abs_project_friendly_name% failed unit tests)>>%abs_detailed_report_file%
+	(ECHO "%abs_project_friendly_name% failed unit tests with error: %errorlevel%")>>%abs_detailed_report_file%
 	SET abs_return_value=1
 )
 

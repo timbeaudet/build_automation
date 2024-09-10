@@ -45,7 +45,10 @@ pushd ../run/ > /dev/null
 printf "\n\nrunning tests for: %s/%s_%s_release %s\n" `pwd` ${testExecutable} ${testSystem} ${testFlag} >> "$abs_detailed_report_file"
 printf "========================================================\n" >> "$abs_detailed_report_file"
 
-"./${testExecutable}_${testSystem}_release" ${testFlag} 2>&1 >> "$abs_detailed_report_file"
+"./${testExecutable}_${testSystem}_release" ${testFlag} 2 >> "$abs_detailed_report_file"
+cat ./test_results.txt >> "$abs_detailed_report_file"
+printf "\n\n" >> "$abs_detailed_report_file"
+
 if [ $? -ne 0 ]; then
 	abs_return_value=1
 fi
