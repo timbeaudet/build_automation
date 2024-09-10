@@ -36,10 +36,6 @@ PUSHD ..\run\
 (ECHO "running tests for /run/%testExecutable%_release.exe %testFlag%")>>%abs_detailed_report_file%
 (ECHO --------------------------------------------------------)>>%abs_detailed_report_file%
 
-(ECHO "error level before setting and running test: %errorlevel%")>>%abs_detailed_report_file%
-COLOR 9
-(ECHO "error level JUST before running test: %errorlevel%")>>%abs_detailed_report_file%
-
 REM (%testExecutable%_release.exe %testFlag%) 2>&1 >> %abs_detailed_report_file%
 (%testExecutable%_release.exe %testFlag%) 2>> %abs_detailed_report_file%
 SET testRunErrorLevel=%errorlevel%
