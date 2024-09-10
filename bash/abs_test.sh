@@ -46,10 +46,13 @@ printf "\n\nrunning tests for: %s/%s_%s_release %s\n" `pwd` ${testExecutable} ${
 printf "========================================================\n" >> "$abs_detailed_report_file"
 
 "./${testExecutable}_${testSystem}_release" ${testFlag} 2 >> "$abs_detailed_report_file"
+testRunErrorLevel=$?
+
 cat ./test_results.txt >> "$abs_detailed_report_file"
 printf "\n\n" >> "$abs_detailed_report_file"
 
-if [ $? -ne 0 ]; then
+if [ $testRunErrorLevel -ne 0 ]; then
+	printf "%s failed unit tests with error: %s\n" ${abs_project_friendly_name} ${testRunErrorLevel} >> "$abs_detailed_report_file"
 	abs_return_value=1
 fi
 

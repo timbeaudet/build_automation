@@ -42,12 +42,14 @@ COLOR 9
 
 REM (%testExecutable%_release.exe %testFlag%) 2>&1 >> %abs_detailed_report_file%
 (%testExecutable%_release.exe %testFlag%) 2>> %abs_detailed_report_file%
+SET testRunErrorLevel=%errorlevel%
+
 (TYPE .\test_results.txt) >> %abs_detailed_report_file%
 (ECHO.)>>%abs_detailed_report_file%
 (ECHO.)>>%abs_detailed_report_file%
 
-IF NOT 0 == %errorlevel% (
-	(ECHO "%abs_project_friendly_name% failed unit tests with error: %errorlevel%")>>%abs_detailed_report_file%
+IF NOT 0 == %testRunErrorLevel% (
+	(ECHO "%abs_project_friendly_name% failed unit tests with error: %testRunErrorLevel%")>>%abs_detailed_report_file%
 	SET abs_return_value=1
 )
 
