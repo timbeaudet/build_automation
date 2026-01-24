@@ -9,11 +9,24 @@ REM
 REM Available on github: https://www.github.com/timbeaudet/build_automation/ under the unlicense agreement.
 REM -------------------------------------------------------------------------------------------------------------------
 
+REM 2026-01-24: This was added to attempt to fix a false-positive that was discovered today (2026-01-24) when trying
+REM   to fix nightly builds when Rushcremental was failing. Once Rushcremental passed, it actually had a compiler
+REM   error when building Public build for a missing semi-colon after tb_debug_log(), TurtleBrains now covers that
+REM   for future potential mishaps, but the nightly build "succeeded", even ran the tests, and it should have failed
+REM   due to the build failure.
+REM
+REM   My assumption was the SET abs_build_had_failure=1 INSIDE of the `IF 0 == %abs_skip_public_config%` condition
+REM   was ignored because of delayed expansion stuff. However, when I tried adding the DelayedExpansion, and using
+REM   !errorlevel! inside public config and/or !abs_build_had_failure! at the bottom then it ALWAYS failed even when
+REM   there were zero errors compiling. At first I thought the false-positive was fixed, but then it always failed.
+REM
+REM   THERE IS A POTENTIAL FALSE POSITIVE IF PUBLIC IS THE ONLY BUILD CONFIGURATION THAT FAILS.
+REM
 REM Apparently %var% gets expanded upon reading the script and not during the running
 REM the command so when used within a for loop, or IF?, oddities seem to ensue.
 REM Enabling delayed expansion and using !var! causes the expansion to happen during
 REM the command. Still I think I've seen oddities with regards to nested loops.
-SETLOCAL enableextensions ENABLEDELAYEDEXPANSION
+REM SETLOCAL enableextensions ENABLEDELAYEDEXPANSION
 
 SET abs_build_had_failure=0
 
@@ -39,14 +52,8 @@ IF NOT DEFINED abs_detailed_report_file (
 (ECHO "windows/%abs_project_file_name%.sln")>>%abs_detailed_report_file%
 (ECHO --------------------------------------------------------)>>%abs_detailed_report_file%
 (ECHO.)>>%abs_detailed_report_file%
-REM Without /maxcpucount msbuild will only use a single core, can specify a number /maxcpucount:2 or leave blank for all.
-REM /nologo hides a few lines being printed that we don't care about.
-REM /verbosity:quiet seems to give only warnings and errors about building the project.
-REM /flp1 is short for fileloggerparemeters:1 and sets up log file location and appends to it.
-@REM SET extra_options=/nologo /maxcpucount /verbosity:quiet /flp1:logfile=%abs_detailed_report_file%;verbosity=quiet;append=true
-@REM msbuild "windows/%abs_project_file_name%.sln" /property:Configuration=debug /p:Platform="Win32" %extra_options%
 CALL make_project.bat --windows --build --debug
-IF NOT 0 == !errorlevel! (
+IF NOT 0 == %errorlevel% (
 	(ECHO debug build failed)>>%abs_detailed_report_file%
 	SET abs_build_had_failure=1
 )
@@ -57,9 +64,8 @@ IF NOT 0 == !errorlevel! (
 (ECHO "windows/%abs_project_file_name%.sln")>>%abs_detailed_report_file%
 (ECHO --------------------------------------------------------)>>%abs_detailed_report_file%
 (ECHO.)>>%abs_detailed_report_file%
-@REM msbuild "windows/%abs_project_file_name%.sln" /property:Configuration=release /p:Platform="Win32" %extra_options%
 CALL make_project.bat --windows --build --release
-IF NOT 0 == !errorlevel! (
+IF NOT 0 == %errorlevel% (
 	(ECHO release build failed)>>%abs_detailed_report_file%
 	SET abs_build_had_failure=1
 )
@@ -71,9 +77,8 @@ IF 0 == %abs_skip_public_config% (
 	(ECHO "windows/%abs_project_file_name%.sln")>>%abs_detailed_report_file%
 	(ECHO --------------------------------------------------------)>>%abs_detailed_report_file%
 	(ECHO.)>>%abs_detailed_report_file%
-	@REM msbuild "windows/%abs_project_file_name%.sln" /property:Configuration=public /p:Platform="Win32" %extra_options%
 	CALL make_project.bat --windows --build --public
-	IF NOT 0 == !errorlevel! (
+	IF NOT 0 == %errorlevel% (
 		(ECHO public build failed)>>%abs_detailed_report_file%
 		SET abs_build_had_failure=1
 	)
