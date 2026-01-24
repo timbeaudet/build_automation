@@ -9,6 +9,12 @@ REM
 REM Available on github: https://www.github.com/timbeaudet/build_automation/ under the unlicense agreement.
 REM -------------------------------------------------------------------------------------------------------------------
 
+REM Apparently %var% gets expanded upon reading the script and not during the running
+REM the command so when used within a for loop, or IF?, oddities seem to ensue.
+REM Enabling delayed expansion and using !var! causes the expansion to happen during
+REM the command. Still I think I've seen oddities with regards to nested loops.
+SETLOCAL enableextensions ENABLEDELAYEDEXPANSION
+
 SET abs_build_had_failure=0
 
 premake5 --file="%abs_project_file_name%.lua" vs2015
@@ -40,7 +46,7 @@ REM /flp1 is short for fileloggerparemeters:1 and sets up log file location and 
 @REM SET extra_options=/nologo /maxcpucount /verbosity:quiet /flp1:logfile=%abs_detailed_report_file%;verbosity=quiet;append=true
 @REM msbuild "windows/%abs_project_file_name%.sln" /property:Configuration=debug /p:Platform="Win32" %extra_options%
 CALL make_project.bat --windows --build --debug
-IF NOT 0 == %errorlevel% (
+IF NOT 0 == !errorlevel! (
 	(ECHO debug build failed)>>%abs_detailed_report_file%
 	SET abs_build_had_failure=1
 )
@@ -53,7 +59,7 @@ IF NOT 0 == %errorlevel% (
 (ECHO.)>>%abs_detailed_report_file%
 @REM msbuild "windows/%abs_project_file_name%.sln" /property:Configuration=release /p:Platform="Win32" %extra_options%
 CALL make_project.bat --windows --build --release
-IF NOT 0 == %errorlevel% (
+IF NOT 0 == !errorlevel! (
 	(ECHO release build failed)>>%abs_detailed_report_file%
 	SET abs_build_had_failure=1
 )
@@ -67,7 +73,7 @@ IF 0 == %abs_skip_public_config% (
 	(ECHO.)>>%abs_detailed_report_file%
 	@REM msbuild "windows/%abs_project_file_name%.sln" /property:Configuration=public /p:Platform="Win32" %extra_options%
 	CALL make_project.bat --windows --build --public
-	IF NOT 0 == %errorlevel% (
+	IF NOT 0 == !errorlevel! (
 		(ECHO public build failed)>>%abs_detailed_report_file%
 		SET abs_build_had_failure=1
 	)
